@@ -176,6 +176,50 @@ class Robot(Entity):
         if self.frame >= self.nFrames - 1:
             pass
 
+    def clampWorldBoundary(self):
+        x, y = self.getPosition()
+        width = self.getWidth()
+        height = self.getHeight()
+
+        # LEFT
+        if x <= 0:
+            x = 0
+            self.velocity[0] = 0
+
+        # RIGHT
+        if x + width >= GameScreen.WORLD_SIZE[0]:
+            x = GameScreen.WORLD_SIZE[0] - width
+            self.velocity[0] = 0
+
+        # TOP (account for head sitting above body)
+        head_top = y - self.head.getHeight() / 2
+        if head_top <= GameScreen.MENU_BARRIER:
+            y = GameScreen.MENU_BARRIER + self.head.getHeight() / 2
+            self.velocity[1] = 0
+
+        # BOTTOM
+        if y + height >= GameScreen.WORLD_SIZE[1]:
+            y = GameScreen.WORLD_SIZE[1] - height
+            self.velocity[1] = 0
+
+        self.setPosition((x, y))
+
+        # if self.getPosition()[0] - self.getWidth() <= 0:
+        #     self.velocity[0] = 0
+        #     self.setPosition((0, self.getPosition()[1] + self.getWidth()))
+
+        # if self.getPosition()[1] - self.head.getHeight() <= GameScreen.MENU_BARRIER:
+        #     self.velocity[1] = 0
+        #     self.setPosition((self.getPosition()[0] + self.head.getHeight(), GameScreen.MENU_BARRIER))
+
+        # if self.getPosition()[0] + self.getWidth() + 15 >= GameScreen.WORLD_SIZE[0]:
+        #     self.velocity[0] = 0
+        #     self.setPosition((GameScreen.WORLD_SIZE[0] - self.getWidth(), self.getPosition()[1]))
+            
+        # if self.getPosition()[1] + self.getHeight() >= GameScreen.WORLD_SIZE[1]:
+        #     self.velocity[1] = 0
+        #     self.setPosition((self.getPosition()[0], GameScreen.WORLD_SIZE[1] - self.getHeight()))
+
     def draw(self, drawSurface):
         if self.direction == "UP":
             super().draw(drawSurface)
