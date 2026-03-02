@@ -1,8 +1,8 @@
 STARTING
-The game will boot up immediately upon running main.
+- The game will boot up immediately upon running main.
 
 MOVEMENT
-In order to move the robot, use the arrow keys.
+- In order to move the robot, use the arrow keys.
 
 SPRINTING
 - In order to sprint, hold down the right or left shift key.
