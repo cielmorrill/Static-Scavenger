@@ -204,22 +204,6 @@ class Robot(Entity):
 
         self.setPosition((x, y))
 
-        # if self.getPosition()[0] - self.getWidth() <= 0:
-        #     self.velocity[0] = 0
-        #     self.setPosition((0, self.getPosition()[1] + self.getWidth()))
-
-        # if self.getPosition()[1] - self.head.getHeight() <= GameScreen.MENU_BARRIER:
-        #     self.velocity[1] = 0
-        #     self.setPosition((self.getPosition()[0] + self.head.getHeight(), GameScreen.MENU_BARRIER))
-
-        # if self.getPosition()[0] + self.getWidth() + 15 >= GameScreen.WORLD_SIZE[0]:
-        #     self.velocity[0] = 0
-        #     self.setPosition((GameScreen.WORLD_SIZE[0] - self.getWidth(), self.getPosition()[1]))
-            
-        # if self.getPosition()[1] + self.getHeight() >= GameScreen.WORLD_SIZE[1]:
-        #     self.velocity[1] = 0
-        #     self.setPosition((self.getPosition()[0], GameScreen.WORLD_SIZE[1] - self.getHeight()))
-
     def draw(self, drawSurface):
         if self.direction == "UP":
             super().draw(drawSurface)
