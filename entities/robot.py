@@ -177,6 +177,39 @@ class Robot(Entity):
         if self.frame >= self.nFrames - 1:
             pass
 
+    def resolveTileCollision(self, tmx_map):
+        blocked_rects = tmx_map.getBlockedTileRects(self)
+
+        x, y = self.getPosition()
+        width = self.getWidth()
+        height = self.getHeight()
+
+        for tile in blocked_rects:
+            # LEFT side of tile
+            if x + width > tile.left and x < tile.left:
+                x = tile.left - width
+                self.velocity[0] = 0
+            # RIGHT side of tile
+            if x < tile.right and x + width > tile.right:
+                x = tile.right
+                self.velocity[0] = 0
+
+            head_top = y - self.head.getHeight() / 2
+            # TOP side of tile (robot head hits tile)
+            if head_top < tile.bottom and head_top > tile.top:
+                y = tile.bottom + self.head.getHeight() / 2
+                self.velocity[1] = 0
+            # BOTTOM side of tile (robot body hits tile)
+            if y < tile.bottom and y + height > tile.bottom:
+                y = tile.bottom
+                self.velocity[1] = 0
+            # HEAD hitting underside of tile
+            if y + height > tile.top and y < tile.top:
+                y = tile.top - height
+                self.velocity[1] = 0
+
+        self.setPosition((x, y))
+
     def clampWorldBoundary(self):
         x, y = self.getPosition()
         width = self.getWidth()
@@ -186,18 +219,15 @@ class Robot(Entity):
         if x <= 0:
             x = 0
             self.velocity[0] = 0
-
         # RIGHT
         if x + width >= GameScreen.WORLD_SIZE[0]:
             x = GameScreen.WORLD_SIZE[0] - width
             self.velocity[0] = 0
-
         # TOP (account for head sitting above body)
         head_top = y - self.head.getHeight() / 2
         if head_top <= GameScreen.MENU_BARRIER:
             y = GameScreen.MENU_BARRIER + self.head.getHeight() / 2
             self.velocity[1] = 0
-
         # BOTTOM
         if y + height >= GameScreen.WORLD_SIZE[1]:
             y = GameScreen.WORLD_SIZE[1] - height
@@ -226,16 +256,16 @@ class Robot(Entity):
         self.head.handleEvent(event)
         self.arms.handleEvent(event)
 
-    def update(self, seconds):
+    def update(self, seconds, tmx_map):
         self.velocity = vec(0,0)
         self.moving = False
 
         if self.health <= 0 or not self.isAlive:
             self.velocity = vec(0,0)
             self.isHurt = False
-            super().update(seconds)
-            self.head.update(seconds)
-            self.arms.update(seconds)
+            super().update(seconds, tmx_map)
+            self.head.update(seconds, tmx_map)
+            self.arms.update(seconds, tmx_map)
             self.setDying(seconds)
             return
                 
@@ -290,7 +320,7 @@ class Robot(Entity):
         if self.attackCooldownTimer > 0:
             self.attackCooldownTimer -= seconds
 
-        super().update(seconds)
+        super().update(seconds, tmx_map)
 
-        self.head.update(seconds)
-        self.arms.update(seconds)
+        self.head.update(seconds, tmx_map)
+        self.arms.update(seconds, tmx_map)

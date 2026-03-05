@@ -196,8 +196,8 @@ class Robot_Arms(Entity):
         self.row = 3
         self.nFrames = 1
 
-    def update(self, seconds):
-        super().update(seconds)
+    def update(self, seconds, tmx_map):
+        super().update(seconds, tmx_map)
 
         if not self.body.isAlive or self.body.health <= 0:
             self.setDying(seconds)

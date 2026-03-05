@@ -257,8 +257,8 @@ class Robot_Head(Entity):
             self.head_offset = vec(0, -14)
         self.row = 12
 
-    def update(self, seconds):
-        super().update(seconds)
+    def update(self, seconds, tmx_map):
+        super().update(seconds, tmx_map)
 
         if self.body.health <= 0:
             self.setDying(seconds)

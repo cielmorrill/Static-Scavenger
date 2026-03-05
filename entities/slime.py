@@ -127,9 +127,9 @@ class Slime(Enemy):
             progress = (frame_float - 8) / 4
             self.jumpHeight = -self.maxJumpHeight * (1 - progress)
         elif self.frame == 13:
+            self.isInvincible = False
             self.shadow = None
         elif self.frame == 15:
-            self.isInvincible = False
             self.jumpHeight = 0
             self.actionState = "isIdle"
             self.attackCooldown = 2
@@ -160,8 +160,8 @@ class Slime(Enemy):
             flippedImage = hurt_image
         drawSurface.blit(flippedImage, draw_pos)
  
-    def update(self, seconds, robot):
-        super().update(seconds)
+    def update(self, seconds, robot, tmx_map):
+        super().update(seconds, robot, tmx_map)
 
         if not self.isAlive:
             return

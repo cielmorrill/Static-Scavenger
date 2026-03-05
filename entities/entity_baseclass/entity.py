@@ -177,10 +177,37 @@ class Entity(Mobile):
             self.velocity[1] = 0
             self.setPosition((self.getPosition()[0], GameScreen.WORLD_SIZE[1] - self.getHeight()))
 
+    def resolveTileCollision(self, tmx_map):
+        blocked_rects = tmx_map.getBlockedTileRects(self)
+
+        x, y = self.getPosition()
+        width = self.getWidth()
+        height = self.getHeight()
+
+        for tile in blocked_rects:
+            # LEFT side of tile
+            if x + width > tile.left and x < tile.left:
+                x = tile.left - width
+                self.velocity[0] = 0
+            # RIGHT side of tile
+            if x < tile.right and x + width > tile.right:
+                x = tile.right
+                self.velocity[0] = 0
+            # TOP side of tile
+            if y + height > tile.top and y < tile.top:
+                y = tile.top - height
+                self.velocity[1] = 0
+            # BOTTOM side of tile
+            if y < tile.bottom and y + height > tile.bottom:
+                y = tile.bottom
+                self.velocity[1] = 0
+
+        self.setPosition((x, y))
+
     def handleEvent(self, event):
         return super().handleEvent(event)
     
-    def update(self, seconds):
+    def update(self, seconds, tmx_map):
         if self.health <= 0 or not self.isAlive:
             if self.isHurt:
                 self.updateHurtState(seconds)
@@ -197,3 +224,4 @@ class Entity(Mobile):
         super().update(seconds)
     
         self.clampWorldBoundary()
+        self.resolveTileCollision(tmx_map)

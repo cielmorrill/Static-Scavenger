@@ -70,7 +70,7 @@ class Enemy(Entity):
     def updateAI (self, seconds, target):
         pass
 
-    def update(self, seconds):
-        super().update(seconds)
+    def update(self, seconds, robot, tmx_map):
+        super().update(seconds, tmx_map)
         if self.isHurt:
             return

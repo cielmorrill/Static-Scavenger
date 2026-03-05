@@ -7,15 +7,14 @@ from tmxmap import TmxMap
 from entities.slime import Slime
 
 class GameEngine(object):
-
     def __init__(self):   
-        self.tmx_map = TmxMap(fileName= "cave_walled_1.0.tmx")
+        self.tmx_map = TmxMap(fileName= "cave_walled_2.0.tmx")
      
-        self.robot = Robot((0,0))
+        self.robot = Robot((400,400))
         shifted_pos = self.robot.getPosition()[1] + self.robot.getHeight() + GameScreen.MENU_BARRIER
-        self.robot.setPosition((0, shifted_pos))
+        self.robot.setPosition((400, shifted_pos))
         
-        self.slime = Slime((200,200))
+        self.slime = Slime((400,600))
 
         self.passive_entities = []
 
@@ -25,13 +24,13 @@ class GameEngine(object):
     def draw(self, drawSurface):
         self.tmx_map.draw(drawSurface)
 
-        self.robot.draw(drawSurface)
-
         for p in self.passive_entities:
             p.draw(drawSurface)
 
         for e in self.enemies:
             e.draw(drawSurface)
+
+        self.robot.draw(drawSurface)
                 
         # show collision
         # pygame.draw.rect(drawSurface, (255, 0, 0), self.slime.getCollisionRect())
@@ -72,7 +71,7 @@ class GameEngine(object):
             self.enemies.append(newSlime)
     
     def update(self, seconds):
-        self.robot.update(seconds)
+        self.robot.update(seconds, self.tmx_map)
 
         if not self.robot.isAlive:
             self.enemies.clear()
@@ -148,10 +147,10 @@ class GameEngine(object):
                     e1.resolveCollision(e2)
 
         for e in self.enemies:
-            e.update(seconds, self.robot)
+            e.update(seconds, self.robot, self.tmx_map)
 
         for p in self.passive_entities:
-            p.update(seconds)
+            p.update(seconds, self.tmx_map)
 
         # CAMERA
         Drawable.CAMERA_OFFSET = self.robot.getPosition() + (self.robot.getSize() / 2) - GameScreen.RESOLUTION / 2
