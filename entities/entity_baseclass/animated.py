@@ -28,6 +28,9 @@ class Animated(Drawable):
     def resetFPS(self):
         self.framePerSecond = self.base_fps
 
+    def getAnimationTimer(self):
+        return self.animationTimer
+
     def update(self, seconds):
         if self.FSManimated:
             self.FSManimated.enter()

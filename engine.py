@@ -9,7 +9,7 @@ from entities.slime import Slime
 class GameEngine(object):
 
     def __init__(self):   
-        self.tmx_map = TmxMap(fileName= "cave_walled_2.0.tmx")
+        self.tmx_map = TmxMap(fileName= "cave_walled_1.0.tmx")
      
         self.robot = Robot((0,0))
         shifted_pos = self.robot.getPosition()[1] + self.robot.getHeight() + GameScreen.MENU_BARRIER

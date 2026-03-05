@@ -23,6 +23,7 @@ class Entity(Mobile):
 
         self.touchingEntity = False
         self.isHurt = False
+        self.isInvincible = False
         self.canAttack = False
         self.isAlive = True
         self.removeMe = False
@@ -92,6 +93,9 @@ class Entity(Mobile):
         self.removeMe = True
 
     def getHurt(self, attack, attackerPos):
+        if self.isInvincible:
+            return
+
         if self.isHurt == False:
             self.isHurt = True
             self.health -= attack

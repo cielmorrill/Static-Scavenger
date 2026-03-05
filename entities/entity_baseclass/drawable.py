@@ -23,14 +23,13 @@ class Drawable(object):
         self.position=vec(*position)
         self.flipped = [False, False]
         self.isHurt = False
+        self.shadow = None
 
         # self.screen = pygame.display.set_mode((self.SCREEN_WIDTH, self.SCREEN_HEIGHT), pygame.FULLSCREEN)
     
     def draw(self, drawSurface):
-        # scaled_surface = pygame.transform.scale(
-        #     drawSurface,
-        #     self.screen.get_size()
-        # )
+        if self.shadow:
+            drawSurface.blit(self.shadow, pyVec(self.getShadowPos()))
 
         # could make more efficient in the future
         flippedImage = pygame.transform.flip(self.image, *self.flipped)
@@ -39,6 +38,15 @@ class Drawable(object):
             hurt_image.fill((255,0,0), special_flags=pygame.BLEND_RGBA_MULT)
             flippedImage = hurt_image
         drawSurface.blit(flippedImage, pyVec(self.position - Drawable.CAMERA_OFFSET))
+
+    def getShadowPos(self):
+        shadow_pos = self.position - Drawable.CAMERA_OFFSET
+
+        # place shadow at entity feet
+        shadow_pos[1] += self.getHeight() - self.shadow.get_height() // 2 - 1
+        shadow_pos[0] += (self.getWidth() - self.shadow.get_width()) // 2
+
+        return shadow_pos
          
     def getSize(self):
         return vec(*self.image.get_size())    
@@ -66,3 +74,12 @@ class Drawable(object):
     
     def setCollisionRect(self, newRect):
         self.image = Surface((newRect.width, newRect.height), SRCALPHA)
+
+    def createShadow(self, width_scale=0.65, height_scale=0.3, alpha=125):
+        w = int(self.getWidth() * width_scale)
+        h = int(self.getHeight() * height_scale)
+
+        shadow_surface = pygame.Surface((w, h), pygame.SRCALPHA)
+        pygame.draw.ellipse(shadow_surface, (0, 0, 0, alpha), shadow_surface.get_rect())
+        
+        self.shadow = shadow_surface

@@ -14,6 +14,7 @@ class Robot(Entity):
         self.arms = Robot_Arms(self)
         self.collisionRect = Rect(7,1,int(self.getWidth() - 6),int(self.getHeight() - 2))
         self.attackRect = self.arms.attackRect
+        self.createShadow()
         
         self.direction = "DOWN"
         self.animateState = "isIdle"
