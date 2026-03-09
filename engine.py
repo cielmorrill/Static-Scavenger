@@ -2,7 +2,7 @@ import pygame
 from entities.entity_baseclass.drawable import Drawable
 from entities.robot import Robot
 from utils.gamescreen import GameScreen
-from utils.vector import vec
+from utils.vector import vec, rectAdd
 from tmxmap import TmxMap
 from entities.slime import Slime
 from entities.objects_or_items.rock import Rock
@@ -41,7 +41,10 @@ class GameEngine(object):
                 
         # show collision
         # pygame.draw.rect(drawSurface, (255, 0, 0), self.slime.getCollisionRect())
-        pygame.draw.rect(drawSurface, (255, 0, 0), self.robot.getCollisionRect())
+        # pygame.draw.rect(drawSurface, (255, 0, 0), rectAdd(-Drawable.CAMERA_OFFSET, self.robot.getCollisionRect()))
+
+        pygame.draw.rect(drawSurface, (255, 0, 0), self.brown.getCollisionRect())
+        pygame.draw.rect(drawSurface, (255, 0, 0), self.grey.getCollisionRect())
         # pygame.draw.rect(drawSurface, (255, 0, 0), self.robot.arms.getAttackRect())
 
         # draw health meter

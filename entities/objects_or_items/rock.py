@@ -2,6 +2,7 @@ from pygame.locals import *
 from utils.gamescreen import GameScreen
 from utils.vector import vec, rectAdd, magnitude, normalize
 from ..entity_baseclass.entity import Entity
+from utils.spriteManager import SpriteManager
 
 """Rocks."""
 # rocks must have:
@@ -13,10 +14,10 @@ class Rock(Entity):
     def __init__(self, position, fileName="", offset=(0,0), maxSpeed=0, row = 0, nFrames = 1):
         super().__init__(position, fileName, offset, maxSpeed, row, nFrames)
 
-        self.animate = True
+        self.animate = False
         self.frame  = 0
 
-        self.collisionRect = Rect(0,0,int(self.getWidth()),int(self.getHeight() - 8))
+        self.collisionRect = Rect(0,0,int(self.getWidth()),int(self.getHeight() - 16))
 
         self.isDamaged = False
         self.isAlive = True
@@ -35,11 +36,11 @@ class Rock(Entity):
 
     def setDying(self, seconds):
         self.row = 4
+        self.image = SpriteManager.getInstance().getSprite(self.fileName, (self.row, self.frame))
         self.isAlive = False
         self.setDead(seconds)
 
     def setDead(self, seconds):
-        self.row = 4
         self.isAlive = False
         self.animate = False
         if self.death_timer > 0:
@@ -75,6 +76,8 @@ class Rock(Entity):
         if self.health <= 0:
                 row = 4
         self.row = row
+        self.image = SpriteManager.getInstance().getSprite(self.fileName, (self.row, self.frame))
+        # print("rock row ", self.row)
 
     def resolveCollision(self, e2):
         rect1 = self.getCollisionRect()

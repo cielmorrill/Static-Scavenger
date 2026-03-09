@@ -13,7 +13,7 @@ class Robot(Entity):
         self.head = Robot_Head(self)
         self.arms = Robot_Arms(self)
         self.collisionRect = Rect(0,0, self.getWidth(), self.getHeight())
-        self.hitbox = Rect(7,1,int(self.getWidth() - 6),int(self.getHeight() - 2))
+        self.hitbox = Rect(7,1,int(self.getWidth() - 6),int(self.getHeight() - 4))
         self.attackRect = self.arms.attackRect
         self.createShadow()
         
@@ -63,6 +63,15 @@ class Robot(Entity):
             K_SPACE : False
         }
 
+        self.joyMap = {
+            "UP": False,
+            "DOWN": False,
+            "LEFT": False,
+            "RIGHT": False,
+            "SPRINT": False,
+            "ATTACK": False
+        }
+
     def getCollisionRect(self):
         return rectAdd(self.getPosition(), self.collisionRect)
     
@@ -103,7 +112,7 @@ class Robot(Entity):
             self.row = 3
             
     def isSprinting(self):
-        return self.keyMap[K_LSHIFT] or self.keyMap[K_RSHIFT]
+        return self.keyMap[K_LSHIFT] or self.keyMap[K_RSHIFT] or self.joyMap["SPRINT"]
     
     def updateSprinting(self, seconds, moving):
         # handle stamina and sprinting
@@ -181,38 +190,72 @@ class Robot(Entity):
         if self.frame >= self.nFrames - 1:
             pass
 
-    def resolveTileCollision(self, tmx_map):
-        blocked_rects = tmx_map.getBlockedTileRects(self)
+    # def resolveTileCollision(self, tmx_map):
+    #     blocked_rects = tmx_map.getBlockedTileRects(self)
 
-        x, y = self.getPosition()
-        width = self.getWidth()
-        height = self.getHeight()
+    #     x, y = self.getPosition()
+    #     width = self.getWidth()
+    #     height = self.getHeight()
 
-        for tile in blocked_rects:
-            # LEFT side of tile
-            if x + width > tile.left and x < tile.left:
-                x = tile.left - width
-                self.velocity[0] = 0
-            # RIGHT side of tile
-            if x < tile.right and x + width > tile.right:
-                x = tile.right
-                self.velocity[0] = 0
+    #     for tile in blocked_rects:
+    #         # LEFT side of tile
+    #         if x + width > tile.left and x < tile.left:
+    #             x = tile.left - width
+    #             self.velocity[0] = 0
+    #         # RIGHT side of tile
+    #         if x < tile.right and x + width > tile.right:
+    #             x = tile.right
+    #             self.velocity[0] = 0
 
-            head_top = y - self.head.getHeight() / 2
-            # TOP side of tile (robot head hits tile)
-            if head_top < tile.bottom and head_top > tile.top:
-                y = tile.bottom + self.head.getHeight() / 2
-                self.velocity[1] = 0
-            # BOTTOM side of tile (robot body hits tile)
-            if y < tile.bottom and y + height > tile.bottom:
-                y = tile.bottom
-                self.velocity[1] = 0
-            # HEAD hitting underside of tile
-            if y + height > tile.top and y < tile.top:
-                y = tile.top - height
-                self.velocity[1] = 0
+    #         head_top = y - self.head.getHeight() / 2
+    #         # TOP side of tile (robot head hits tile)
+    #         if head_top < tile.bottom and head_top > tile.top:
+    #             y = tile.bottom + self.head.getHeight() / 2
+    #             self.velocity[1] = 0
+    #         # BOTTOM side of tile (robot body hits tile)
+    #         if y < tile.bottom and y + height > tile.bottom:
+    #             y = tile.bottom
+    #             self.velocity[1] = 0
+    #         # HEAD hitting underside of tile
+    #         if y + height > tile.top and y < tile.top:
+    #             y = tile.top - height
+    #             self.velocity[1] = 0
 
-        self.setPosition((x, y))
+    #     self.setPosition((x, y))
+
+    # def resolveTileCollision(self, tmx_map):
+    #     blocked_rects = tmx_map.getBlockedTileRects(self)
+
+    #     x, y = self.getPosition()
+    #     width = self.getWidth()
+    #     height = self.getHeight()
+
+    #     for tile in blocked_rects:
+    #         x_percent = abs((x - tile.x) / tile.width)
+    #         y_percent = abs((y - tile.y) / tile.height)
+    #         if x_percent > y_percent:
+    #         # LEFT side of tile
+    #             if x + width > tile.left and x < tile.left:
+    #                 x = tile.left - width
+    #                 self.velocity[0] = 0
+    #             # RIGHT side of tile
+    #             if x < tile.right and x + width > tile.right:
+    #                 x = tile.right
+    #                 self.velocity[0] = 0
+    #         else:
+    #             head_top = y - self.head.getHeight() / 2
+    #             if head_top < tile.bottom and head_top > tile.top:
+    #                 y = tile.bottom + self.head.getHeight() / 2
+    #                 self.velocity[1] = 0
+    #                 # BOTTOM side of tile (robot body hits tile)
+    #             if y < tile.bottom and y + height > tile.bottom:
+    #                 y = tile.bottom
+    #                 self.velocity[1] = 0
+    #             # HEAD hitting underside of tile
+    #             if y + height > tile.top and y < tile.top:
+    #                 y = tile.top - height
+    #                 self.velocity[1] = 0
+    #     self.setPosition((x, y))
 
     def clampWorldBoundary(self):
         x, y = self.getPosition()
@@ -257,6 +300,32 @@ class Robot(Entity):
         if event.type in (KEYDOWN, KEYUP) and event.key in self.keyMap.keys():
             self.keyMap[event.key] = event.type == KEYDOWN
 
+        if event.type in (JOYBUTTONDOWN, JOYBUTTONUP) and event.button in self.joyMap.keys():
+            self.joyMap[event.button] = event.type == JOYBUTTONDOWN
+
+        if event.type == JOYHATMOTION:
+            x, y = event.value
+
+            self.joyMap["LEFT"] = x == -1
+            self.joyMap["RIGHT"] = x == 1
+            self.joyMap["UP"] = y == 1
+            self.joyMap["DOWN"] = y == -1
+
+        if event.type == JOYBUTTONDOWN:
+            if event.button == 0:  # BOTTOM BUTTON
+                self.joyMap["ATTACK"] = True
+            if event.button == 2:  # LEFT BUTTON
+                self.joyMap["SPRINT"] = True
+
+        if event.type == JOYBUTTONUP:
+            if event.button == 0:
+                self.joyMap["ATTACK"] = False
+            if event.button == 2:
+                self.joyMap["SPRINT"] = False
+
+        if event.type in (JOYBUTTONDOWN, JOYBUTTONUP, JOYHATMOTION):
+            print(event)
+
         self.head.handleEvent(event)
         self.arms.handleEvent(event)
 
@@ -273,9 +342,9 @@ class Robot(Entity):
             self.setDying(seconds)
             return
                 
-        # handle movement input
-        if self.keyMap[K_LEFT] or self.keyMap[K_RIGHT]:
-            if self.keyMap[K_LEFT]:
+        # handle movement input KEYBOARD
+        if self.keyMap[K_LEFT] or self.keyMap[K_RIGHT] or self.joyMap["LEFT"] or self.joyMap["RIGHT"]:
+            if self.keyMap[K_LEFT] or self.joyMap["LEFT"]:
                 self.velocity[0] = -self.speed
                 self.flipped[0] = True
                 self.direction = "LR"
@@ -287,8 +356,8 @@ class Robot(Entity):
                 self.moving = True
         else:
             self.velocity[0] = 0
-        if self.keyMap[K_UP] or self.keyMap[K_DOWN]:
-            if self.keyMap[K_UP]:
+        if self.keyMap[K_UP] or self.keyMap[K_DOWN] or self.joyMap["UP"] or self.joyMap["DOWN"]:
+            if self.keyMap[K_UP] or self.joyMap["UP"]:
                 self.velocity[1] = -self.speed
                 self.direction = "UP"
                 self.moving = True
@@ -311,7 +380,7 @@ class Robot(Entity):
             if not self.isHurt:
                 self.velocity = vec(0,0)
                 self.moving = False
-        elif self.keyMap[K_SPACE] and self.attackCooldownTimer <= 0:
+        elif self.keyMap[K_SPACE] and self.attackCooldownTimer <= 0 or self.joyMap["ATTACK"] and self.attackCooldownTimer <= 0:
             self.setAttacking()
         else:
             if self.moving:

@@ -8,6 +8,8 @@ class Robot_Head(Entity):
         super().__init__(body.getPosition(), fileName, offset, maxSpeed, row, nFrames)
         self.fileName = "robot_head.png"
 
+        self.collisionRect = None
+
         self.body = body
         self.head_offset = vec(0, 0)  # base offset from body
         self.hitbox = Rect(7,0,int(self.getWidth() - 14),int(self.getHeight()))
@@ -286,28 +288,28 @@ class Robot_Head(Entity):
             self.body.getPosition()[1] + self.head_offset[1] + self.bobAmount
         )
 
-        # lagging code
-        currentPos = self.getPosition()
-        dx = targetPos[0] - currentPos[0]
-        dy = targetPos[1] - currentPos[1]
-        distance = magnitude(vec(dx, dy))
-        deadzone = 5   # pixels
+        # # lagging code
+        # currentPos = self.getPosition()
+        # dx = targetPos[0] - currentPos[0]
+        # dy = targetPos[1] - currentPos[1]
+        # distance = magnitude(vec(dx, dy))
+        # deadzone = 5   # pixels
 
-        # clamp max lag distance
-        if distance > self.maxLagDistance:
-            dx = dx / distance * self.maxLagDistance
-            dy = dy / distance * self.maxLagDistance
-            newX = targetPos[0] - dx
-            newY = targetPos[1] - dy
-        else:
-            newX = currentPos[0] + dx * self.speed * seconds
-            newY = currentPos[1] + dy * self.speed * seconds
+        # # clamp max lag distance
+        # if distance > self.maxLagDistance:
+        #     dx = dx / distance * self.maxLagDistance
+        #     dy = dy / distance * self.maxLagDistance
+        #     newX = targetPos[0] - dx
+        #     newY = targetPos[1] - dy
+        # else:
+        #     newX = currentPos[0] + dx * self.speed * seconds
+        #     newY = currentPos[1] + dy * self.speed * seconds
 
-        if abs(dx) < deadzone:
-            newX = targetPos[0]
-        if abs(dy) < deadzone:
-            newY = targetPos[1]
+        # if abs(dx) < deadzone:
+        #     newX = targetPos[0]
+        # if abs(dy) < deadzone:
+        #     newY = targetPos[1]
 
-        self.setPosition(vec(newX, newY))
+        self.setPosition(vec(targetPos[0], targetPos[1]))
 
         self.isHurt = self.body.isHurt

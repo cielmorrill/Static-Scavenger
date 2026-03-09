@@ -7,8 +7,13 @@ def main():
     #Initialize the module
 
     pygame.init()
-
     pygame.font.init()
+
+    pygame.joystick.init()
+
+    if pygame.joystick.get_count() > 0:
+        joystick = pygame.joystick.Joystick(0)
+        joystick.init()
 
     #Get the screen
     screen = pygame.display.set_mode(pyVec(GameScreen.UPSCALED))

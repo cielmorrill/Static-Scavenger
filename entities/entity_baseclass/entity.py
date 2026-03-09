@@ -183,22 +183,26 @@ class Entity(Mobile):
         height = self.getHeight()
 
         for tile in blocked_rects:
+            x_percent = abs((x - tile.x) / tile.width)
+            y_percent = abs((y - tile.y) / tile.height)
+            if x_percent > y_percent:
             # LEFT side of tile
-            if x + width > tile.left and x < tile.left:
-                x = tile.left - width
-                self.velocity[0] = 0
-            # RIGHT side of tile
-            if x < tile.right and x + width > tile.right:
-                x = tile.right
-                self.velocity[0] = 0
-            # TOP side of tile
-            if y + height > tile.top and y < tile.top:
-                y = tile.top - height
-                self.velocity[1] = 0
-            # BOTTOM side of tile
-            if y < tile.bottom and y + height > tile.bottom:
-                y = tile.bottom
-                self.velocity[1] = 0
+                if x + width > tile.left and x < tile.left:
+                    x = tile.left - width
+                    self.velocity[0] = 0
+                # RIGHT side of tile
+                if x < tile.right and x + width > tile.right:
+                    x = tile.right
+                    self.velocity[0] = 0
+            else:
+                # TOP side of tile
+                if y + height > tile.top and y < tile.top:
+                    y = tile.top - height
+                    self.velocity[1] = 0
+                # BOTTOM side of tile
+                if y < tile.bottom and y + height > tile.bottom:
+                    y = tile.bottom
+                    self.velocity[1] = 0
 
         self.setPosition((x, y))
 
