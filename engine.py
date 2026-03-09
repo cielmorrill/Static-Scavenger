@@ -5,18 +5,23 @@ from utils.gamescreen import GameScreen
 from utils.vector import vec
 from tmxmap import TmxMap
 from entities.slime import Slime
+from entities.objects_or_items.rock import Rock
 
 class GameEngine(object):
     def __init__(self):   
         self.tmx_map = TmxMap(fileName= "cave_walled_2.0.tmx")
      
-        self.robot = Robot((400,400))
+        self.robot = Robot((450,400))
         shifted_pos = self.robot.getPosition()[1] + self.robot.getHeight() + GameScreen.MENU_BARRIER
-        self.robot.setPosition((400, shifted_pos))
+        self.robot.setPosition((450, shifted_pos))
         
         self.slime = Slime((400,600))
 
-        self.passive_entities = []
+        self.brown = Rock((400,200), "brown_rock.png")
+        self.grey = Rock((450,200), "grey_rock.png")
+        self.ore = Drawable((500,200), "ore.png")
+
+        self.passive_entities = [self.brown, self.grey]
 
         self.enemies = []
         self.enemies.append(self.slime)
@@ -31,11 +36,12 @@ class GameEngine(object):
             e.draw(drawSurface)
 
         self.robot.draw(drawSurface)
+
+        self.ore.draw(drawSurface)
                 
         # show collision
         # pygame.draw.rect(drawSurface, (255, 0, 0), self.slime.getCollisionRect())
-        # for rect in self.robot.getCollisionRect():
-        #     pygame.draw.rect(drawSurface, (255, 0, 0), rect)
+        pygame.draw.rect(drawSurface, (255, 0, 0), self.robot.getCollisionRect())
         # pygame.draw.rect(drawSurface, (255, 0, 0), self.robot.arms.getAttackRect())
 
         # draw health meter
@@ -83,16 +89,16 @@ class GameEngine(object):
 
         # check for enemy collision with robot & robot attack collision w/ enemies
         for e in self.enemies:
-            for rect in self.robot.getCollisionRect():
-                collision = e.getCollisionRect().clip(rect)
+            collision = e.getCollisionRect().clip(self.robot.getCollisionRect())
 
-                if collision.width != 0 and collision.height != 0 and e.isAlive:
-                    # ROBOT GETS HURT
-                    # flash red, knockback, temporary invulnerability, health decrease
-                    if not self.robot.isHurt and self.robot.isAlive:
-                        self.robot.getHurt(e.attackPower, e.getPosition())
-                else:
-                    e.touchingCheck(False)
+            if collision.width != 0 and collision.height != 0 and e.isAlive:
+                # ROBOT GETS HURT
+                # flash red, knockback, temporary invulnerability, health decrease
+                if not self.robot.isHurt and self.robot.isAlive:
+                    self.robot.getHurt(e.attackPower, e.getPosition())
+            else:
+                e.touchingCheck(False)
+
             if self.robot.actionState == "isAttacking":
                 collision = e.getCollisionRect().clip(self.robot.arms.getAttackRect())
                 if collision.width != 0 and collision.height != 0 and e.isAlive:
@@ -103,28 +109,31 @@ class GameEngine(object):
 
         # check for entity collision with robot
         for p in self.passive_entities:
-            for rect in self.robot.getCollisionRect():
-                collision = p.getCollisionRect().clip(rect)
+            collision = p.getCollisionRect().clip(self.robot.getCollisionRect())
+            if collision.width != 0 and collision.height != 0 and p.isAlive:
+                p.resolveCollision(self.robot)
+
+            if self.robot.actionState == "isAttacking":
+                collision = p.getCollisionRect().clip(self.robot.arms.getAttackRect())
                 if collision.width != 0 and collision.height != 0 and p.isAlive:
-                    p.resolveCollision(self.robot)
+                    if not p.isDamaged and p.isAlive:
+                        p.getHurt(self.robot.attackPower, self.robot.getPosition())
             
         # enemy check for robot in awareness range
         for e in self.enemies:
-            for rect in self.robot.getCollisionRect():
-                collision = e.getAwarenessRect().clip(rect)
-                if collision.width != 0 and collision.height != 0 and self.robot.isAlive:
-                    e.robotAwareness(True)
-                else:
-                    e.robotAwareness(False)
+            collision = e.getAwarenessRect().clip(self.robot.getCollisionRect())
+            if collision.width != 0 and collision.height != 0 and self.robot.isAlive:
+                e.robotAwareness(True)
+            else:
+                e.robotAwareness(False)
 
         # enemy check for robot in attack range
         for e in self.enemies:
-            for rect in self.robot.getCollisionRect():
-                collision = e.getAttackRect().clip(rect)
-                if collision.width != 0 and collision.height != 0 and self.robot.isAlive:
-                    e.attackCheck(True)
-                else:
-                    e.attackCheck(False)
+            collision = e.getAttackRect().clip(self.robot.getCollisionRect())
+            if collision.width != 0 and collision.height != 0 and self.robot.isAlive:
+                e.attackCheck(True)
+            else:
+                e.attackCheck(False)
 
         # check for enemy-enemy collision
         for i in range(len(self.enemies)):
@@ -142,8 +151,8 @@ class GameEngine(object):
                 e1 = self.passive_entities[i]
                 e2 = self.passive_entities[j]
 
-                collision = e1.getCollisionRect().clip(e2.getCollisionRect() and e1.isAlive and e2.isAlive)
-                if collision.width != 0 and collision.height != 0:
+                collision = e1.getCollisionRect().clip(e2.getCollisionRect())
+                if collision.width != 0 and collision.height != 0 and e1.isAlive and e2.isAlive:
                     e1.resolveCollision(e2)
 
         for e in self.enemies:

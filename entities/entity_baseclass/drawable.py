@@ -23,6 +23,7 @@ class Drawable(object):
         self.position=vec(*position)
         self.flipped = [False, False]
         self.isHurt = False
+        self.isDamaged = False
         self.shadow = None
 
         # self.screen = pygame.display.set_mode((self.SCREEN_WIDTH, self.SCREEN_HEIGHT), pygame.FULLSCREEN)
@@ -36,6 +37,10 @@ class Drawable(object):
         if self.isHurt:
             hurt_image = flippedImage.copy()
             hurt_image.fill((255,0,0), special_flags=pygame.BLEND_RGBA_MULT)
+            flippedImage = hurt_image
+        if self.isDamaged:
+            hurt_image = flippedImage.copy()
+            hurt_image.fill((150,150,150), special_flags=pygame.BLEND_RGB_MULT)
             flippedImage = hurt_image
         drawSurface.blit(flippedImage, pyVec(self.position - Drawable.CAMERA_OFFSET))
 

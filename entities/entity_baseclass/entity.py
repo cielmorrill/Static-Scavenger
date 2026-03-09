@@ -19,7 +19,7 @@ class Entity(Mobile):
         self.direction = None
         self.animate = True
 
-        self.collisionRect = Rect(7,8,int(self.getWidth()),int(self.getHeight()))
+        self.collisionRect = Rect(0,0,int(self.getWidth()),int(self.getHeight()))
 
         self.touchingEntity = False
         self.isHurt = False
@@ -93,19 +93,17 @@ class Entity(Mobile):
         self.removeMe = True
 
     def getHurt(self, attack, attackerPos):
-        if self.isInvincible:
+        if self.isInvincible or self.isHurt or not self.isAlive:
             return
 
-        if self.isHurt == False:
-            self.isHurt = True
-            self.health -= attack
+        self.isHurt = True
+        self.hurtTimer = self.hurtTimerBase
+        self.health -= attack
 
-            direction = self.getPosition() - attackerPos
-            direction[1] *= 0.75
-            direction = normalize(direction)
-            self.knockback = direction * self.knockbackStrength
-        else:
-            return
+        direction = self.getPosition() - attackerPos
+        direction[1] *= 0.75
+        direction = normalize(direction)
+        self.knockback = direction * self.knockbackStrength
         
     def updateHurtState(self, seconds):
         if self.isHurt:

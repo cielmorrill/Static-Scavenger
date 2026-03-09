@@ -42,6 +42,7 @@ class SpriteManager(object):
     _SPRITE_SIZES = {
         "robot_body.png": vec(32, 16),
         "robot_arms.png": vec(64, 32),
+        "ore.png"       : vec(16,16)
     }
     
     # A default sprite size
@@ -59,7 +60,10 @@ class SpriteManager(object):
                      "robot_body.png",
                      "robot_head.png",
                      "robot_arms.png",
-                     "slime_sprite.png"]
+                     "slime_sprite.png",
+                     "brown_rock.png",
+                     "grey_rock.png",
+                     "ore.png"]
     
     # A list of images that require to be loaded with a color key
     _COLOR_KEY = [""] # ex "kirby.png"

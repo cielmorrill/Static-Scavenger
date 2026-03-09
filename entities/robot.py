@@ -12,7 +12,8 @@ class Robot(Entity):
         self.fileName = "robot_body.png"
         self.head = Robot_Head(self)
         self.arms = Robot_Arms(self)
-        self.collisionRect = Rect(7,1,int(self.getWidth() - 6),int(self.getHeight() - 2))
+        self.collisionRect = Rect(0,0, self.getWidth(), self.getHeight())
+        self.hitbox = Rect(7,1,int(self.getWidth() - 6),int(self.getHeight() - 2))
         self.attackRect = self.arms.attackRect
         self.createShadow()
         
@@ -27,7 +28,7 @@ class Robot(Entity):
         self.maxHealth = 100.0
         self.health = self.maxHealth
         self.attackPower = 20.0
-        self.attackCooldown = .5
+        self.attackCooldown = .2
         self.attackCooldownTimer = 0
         self.canAttack = True
 
@@ -63,8 +64,11 @@ class Robot(Entity):
         }
 
     def getCollisionRect(self):
-        body_rect = rectAdd(self.getPosition(), self.collisionRect)
-        head_rect = rectAdd(self.head.getPosition(), self.head.collisionRect)
+        return rectAdd(self.getPosition(), self.collisionRect)
+    
+    def getHitboxes(self):
+        body_rect = rectAdd(self.getPosition(), self.hitbox)
+        head_rect = rectAdd(self.head.getPosition(), self.head.hitbox)
         return [body_rect, head_rect]
     
     # handle idle image based on direction
