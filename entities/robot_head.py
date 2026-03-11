@@ -313,3 +313,4 @@ class Robot_Head(Entity):
         self.setPosition(vec(targetPos[0], targetPos[1]))
 
         self.isHurt = self.body.isHurt
+        self.direction = self.body.direction

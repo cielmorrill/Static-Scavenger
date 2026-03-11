@@ -14,7 +14,7 @@ class Robot(Entity):
         self.arms = Robot_Arms(self)
         self.collisionRect = Rect(0,0, self.getWidth(), self.getHeight())
         self.hitbox = Rect(7,1,int(self.getWidth() - 6),int(self.getHeight() - 4))
-        self.attackRect = self.arms.attackRect
+        self.attackRect = Rect(-5,-20,int(self.getWidth() + 10),int(self.getHeight() + 30))
         self.createShadow()
         
         self.direction = "DOWN"
@@ -74,6 +74,9 @@ class Robot(Entity):
 
     def getCollisionRect(self):
         return rectAdd(self.getPosition(), self.collisionRect)
+    
+    def getAttackRect(self):
+        return rectAdd(self.getPosition(), self.attackRect)
     
     def getHitboxes(self):
         body_rect = rectAdd(self.getPosition(), self.hitbox)
@@ -190,97 +193,9 @@ class Robot(Entity):
         if self.frame >= self.nFrames - 1:
             pass
 
-    # def resolveTileCollision(self, tmx_map):
-    #     blocked_rects = tmx_map.getBlockedTileRects(self)
-
-    #     x, y = self.getPosition()
-    #     width = self.getWidth()
-    #     height = self.getHeight()
-
-    #     for tile in blocked_rects:
-    #         # LEFT side of tile
-    #         if x + width > tile.left and x < tile.left:
-    #             x = tile.left - width
-    #             self.velocity[0] = 0
-    #         # RIGHT side of tile
-    #         if x < tile.right and x + width > tile.right:
-    #             x = tile.right
-    #             self.velocity[0] = 0
-
-    #         head_top = y - self.head.getHeight() / 2
-    #         # TOP side of tile (robot head hits tile)
-    #         if head_top < tile.bottom and head_top > tile.top:
-    #             y = tile.bottom + self.head.getHeight() / 2
-    #             self.velocity[1] = 0
-    #         # BOTTOM side of tile (robot body hits tile)
-    #         if y < tile.bottom and y + height > tile.bottom:
-    #             y = tile.bottom
-    #             self.velocity[1] = 0
-    #         # HEAD hitting underside of tile
-    #         if y + height > tile.top and y < tile.top:
-    #             y = tile.top - height
-    #             self.velocity[1] = 0
-
-    #     self.setPosition((x, y))
-
-    # def resolveTileCollision(self, tmx_map):
-    #     blocked_rects = tmx_map.getBlockedTileRects(self)
-
-    #     x, y = self.getPosition()
-    #     width = self.getWidth()
-    #     height = self.getHeight()
-
-    #     for tile in blocked_rects:
-    #         x_percent = abs((x - tile.x) / tile.width)
-    #         y_percent = abs((y - tile.y) / tile.height)
-    #         if x_percent > y_percent:
-    #         # LEFT side of tile
-    #             if x + width > tile.left and x < tile.left:
-    #                 x = tile.left - width
-    #                 self.velocity[0] = 0
-    #             # RIGHT side of tile
-    #             if x < tile.right and x + width > tile.right:
-    #                 x = tile.right
-    #                 self.velocity[0] = 0
-    #         else:
-    #             head_top = y - self.head.getHeight() / 2
-    #             if head_top < tile.bottom and head_top > tile.top:
-    #                 y = tile.bottom + self.head.getHeight() / 2
-    #                 self.velocity[1] = 0
-    #                 # BOTTOM side of tile (robot body hits tile)
-    #             if y < tile.bottom and y + height > tile.bottom:
-    #                 y = tile.bottom
-    #                 self.velocity[1] = 0
-    #             # HEAD hitting underside of tile
-    #             if y + height > tile.top and y < tile.top:
-    #                 y = tile.top - height
-    #                 self.velocity[1] = 0
-    #     self.setPosition((x, y))
-
-    def clampWorldBoundary(self):
-        x, y = self.getPosition()
-        width = self.getWidth()
-        height = self.getHeight()
-
-        # LEFT
-        if x <= 0:
-            x = 0
-            self.velocity[0] = 0
-        # RIGHT
-        if x + width >= GameScreen.WORLD_SIZE[0]:
-            x = GameScreen.WORLD_SIZE[0] - width
-            self.velocity[0] = 0
-        # TOP (account for head sitting above body)
-        head_top = y - self.head.getHeight() / 2
-        if head_top <= GameScreen.MENU_BARRIER:
-            y = GameScreen.MENU_BARRIER + self.head.getHeight() / 2
-            self.velocity[1] = 0
-        # BOTTOM
-        if y + height >= GameScreen.WORLD_SIZE[1]:
-            y = GameScreen.WORLD_SIZE[1] - height
-            self.velocity[1] = 0
-
-        self.setPosition((x, y))
+    def pickup(self, item):
+        item.onPickup(self)
+        self.inventory.append(item)
 
     def draw(self, drawSurface):
         if self.direction == "UP":

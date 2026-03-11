@@ -6,6 +6,7 @@ from utils.vector import vec, rectAdd
 from tmxmap import TmxMap
 from entities.slime import Slime
 from entities.objects_or_items.rock import Rock
+from entities.objects_or_items.cowboy_hat import Cowboy_Hat
 
 class GameEngine(object):
     def __init__(self):   
@@ -14,6 +15,10 @@ class GameEngine(object):
         self.robot = Robot((450,400))
         shifted_pos = self.robot.getPosition()[1] + self.robot.getHeight() + GameScreen.MENU_BARRIER
         self.robot.setPosition((450, shifted_pos))
+
+        self.hat = Cowboy_Hat((0,0))
+        self.hat.setPickup(self.robot.head)
+        self.hat.setEquip(self.robot.head)
         
         self.slime = Slime((400,600))
 
@@ -26,6 +31,9 @@ class GameEngine(object):
         self.enemies = []
         self.enemies.append(self.slime)
 
+        self.items = []
+        self.items.append(self.hat)
+
     def draw(self, drawSurface):
         self.tmx_map.draw(drawSurface)
 
@@ -36,16 +44,20 @@ class GameEngine(object):
             e.draw(drawSurface)
 
         self.robot.draw(drawSurface)
+        self.hat.draw(drawSurface)
 
         self.ore.draw(drawSurface)
+
+        for i in self.items:
+            i.draw(drawSurface)
                 
         # show collision
         # pygame.draw.rect(drawSurface, (255, 0, 0), self.slime.getCollisionRect())
         # pygame.draw.rect(drawSurface, (255, 0, 0), rectAdd(-Drawable.CAMERA_OFFSET, self.robot.getCollisionRect()))
 
-        pygame.draw.rect(drawSurface, (255, 0, 0), self.brown.getCollisionRect())
-        pygame.draw.rect(drawSurface, (255, 0, 0), self.grey.getCollisionRect())
-        # pygame.draw.rect(drawSurface, (255, 0, 0), self.robot.arms.getAttackRect())
+        # pygame.draw.rect(drawSurface, (255, 0, 0), rectAdd(-Drawable.CAMERA_OFFSET, self.brown.getCollisionRect()))
+        # pygame.draw.rect(drawSurface, (255, 0, 0), rectAdd(-Drawable.CAMERA_OFFSET, self.grey.getCollisionRect()))
+        # pygame.draw.rect(drawSurface, (255, 0, 0), rectAdd(-Drawable.CAMERA_OFFSET, self.robot.getAttackRect()))
 
         # draw health meter
         pygame.draw.rect(drawSurface, (255, 255, 255), pygame.Rect(8,4,104,14))
@@ -73,6 +85,9 @@ class GameEngine(object):
 
         for e in self.enemies:
             e.handleEvent(event)
+
+        for i in self.items:
+            i.handleEvent(event)
 
         if event.type == pygame.MOUSEBUTTONDOWN:
             pos = vec(*event.pos) / GameScreen.SCALE
@@ -103,7 +118,7 @@ class GameEngine(object):
                 e.touchingCheck(False)
 
             if self.robot.actionState == "isAttacking":
-                collision = e.getCollisionRect().clip(self.robot.arms.getAttackRect())
+                collision = e.getCollisionRect().clip(self.robot.getAttackRect())
                 if collision.width != 0 and collision.height != 0 and e.isAlive:
                     # ENEMY GETS HURT
                     # flash red, knockback, temporary invulnerability, health decrease
@@ -117,7 +132,7 @@ class GameEngine(object):
                 p.resolveCollision(self.robot)
 
             if self.robot.actionState == "isAttacking":
-                collision = p.getCollisionRect().clip(self.robot.arms.getAttackRect())
+                collision = p.getCollisionRect().clip(self.robot.getAttackRect())
                 if collision.width != 0 and collision.height != 0 and p.isAlive:
                     if not p.isDamaged and p.isAlive:
                         p.getHurt(self.robot.attackPower, self.robot.getPosition())
@@ -163,6 +178,11 @@ class GameEngine(object):
 
         for p in self.passive_entities:
             p.update(seconds, self.tmx_map)
+
+        for item in self.items:
+            item.update()
+            if self.robot.getCollisionRect().colliderect(item.getCollisionRect()) and item.canPickUp:
+                self.robot.pickup(item)
 
         # CAMERA
         Drawable.CAMERA_OFFSET = self.robot.getPosition() + (self.robot.getSize() / 2) - GameScreen.RESOLUTION / 2

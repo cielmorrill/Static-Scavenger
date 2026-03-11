@@ -11,8 +11,9 @@ class Robot_Arms(Entity):
         self.body = body
         self.animate = True
 
-        self.attackRect = Rect(0,0,int(self.getWidth() - 10),int(self.getHeight() + 10))
-        self.collisionRect = Rect(0,0,int(self.getWidth() - 16),int(self.getHeight()))
+        # self.attackRect = Rect(0,0,int(self.getWidth() - 10),int(self.getHeight() + 10))
+        # self.collisionRect = Rect(0,0,int(self.getWidth() - 16),int(self.getHeight()))
+        self.collisionRect = None
 
         self.weaponDrawn = False
         self.sheatheCooldown = 10
@@ -20,11 +21,6 @@ class Robot_Arms(Entity):
 
         self.actionState = "isIdle"
         self.animateState = "isIdle"
-
-    def getAttackRect(self):
-        rect = self.attackRect.copy()
-        rect.center = self.getCollisionRect().center
-        return rect
 
     def setIdle(self):
         self.frame = 0

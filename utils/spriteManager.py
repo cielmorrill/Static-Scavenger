@@ -63,12 +63,12 @@ class SpriteManager(object):
                      "slime_sprite.png",
                      "brown_rock.png",
                      "grey_rock.png",
-                     "ore.png"]
+                     "ore.png",
+                     "cowboy_hat.png"]
     
     # A list of images that require to be loaded with a color key
     _COLOR_KEY = [""] # ex "kirby.png"
     
-
 
 
 

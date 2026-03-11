@@ -1,6 +1,5 @@
-from pygame.locals import *
-from utils.gamescreen import GameScreen
-from utils.vector import vec, rectAdd, magnitude, normalize
+from pygame.locals import Rect
+from utils.vector import vec, rectAdd
 from ..entity_baseclass.entity import Entity
 from utils.spriteManager import SpriteManager
 
@@ -17,7 +16,7 @@ class Rock(Entity):
         self.animate = False
         self.frame  = 0
 
-        self.collisionRect = Rect(0,0,int(self.getWidth()),int(self.getHeight() - 16))
+        self.collisionRect = Rect(0,8,int(self.getWidth()),int(self.getHeight() - 10))
 
         self.isDamaged = False
         self.isAlive = True
