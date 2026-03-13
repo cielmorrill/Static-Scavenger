@@ -12,6 +12,7 @@ class Robot_Head(Entity):
 
         self.body = body
         self.head_offset = vec(0, 0)  # base offset from body
+        self.equippable_offset = vec(0,-7)
         self.hitbox = Rect(7,0,int(self.getWidth() - 14),int(self.getHeight()))
 
         self.deathVelocity = vec(0, 0)

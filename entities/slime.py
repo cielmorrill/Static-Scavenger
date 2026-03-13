@@ -14,7 +14,7 @@ class Slime(Enemy):
         self.actionState = None
         self.animate = True
         self.direction = "DOWN"     # ["UP", "DOWN"]
-        # self.createShadow(width_scale=.9, alpha=100)
+        self.equippable_offset = vec(1, -3)
 
         self.collisionRect = Rect(7,8,int(self.getWidth() - 12),int(self.getHeight() - 15))
         self.awarenessRect = Rect(0,0,int(self.getWidth() * 7),int(self.getHeight() * 7))

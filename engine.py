@@ -18,9 +18,13 @@ class GameEngine(object):
 
         self.hat = Cowboy_Hat((0,0))
         self.hat.setPickup(self.robot.head)
-        self.hat.setEquip(self.robot.head)
+        self.hat.setEquip(self.robot.head, self.robot.head.equippable_offset)
         
         self.slime = Slime((400,600))
+
+        self.hat2 = Cowboy_Hat((0,0))
+        self.hat2.setPickup(self.slime)
+        self.hat2.setEquip(self.slime, self.slime.equippable_offset)
 
         self.brown = Rock((400,200), "brown_rock.png")
         self.grey = Rock((450,200), "grey_rock.png")
@@ -33,6 +37,8 @@ class GameEngine(object):
 
         self.items = []
         self.items.append(self.hat)
+        self.items.append(self.hat2)
+
 
     def draw(self, drawSurface):
         self.tmx_map.draw(drawSurface)
@@ -44,7 +50,7 @@ class GameEngine(object):
             e.draw(drawSurface)
 
         self.robot.draw(drawSurface)
-        self.hat.draw(drawSurface)
+        # self.hat.draw(drawSurface)
 
         self.ore.draw(drawSurface)
 

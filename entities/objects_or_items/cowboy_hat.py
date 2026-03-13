@@ -9,7 +9,7 @@ class Cowboy_Hat(Equippable):
 
     def update(self):
         super().update()
-        self.position[1] -= 7
+        self.position += self.equippable_offset
         if self.isEquipped:
             if self.direction == "LR":
                 self.row = 1
