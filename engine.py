@@ -18,16 +18,16 @@ class GameEngine(object):
         shifted_pos = self.robot.getPosition()[1] + self.robot.getHeight() + GameScreen.MENU_BARRIER
         self.robot.setPosition((200, shifted_pos))
 
-        # self.hat = Cowboy_Hat((0,0))
-        # self.hat.setPickup(self.robot.head)
-        # self.hat.setEquip(self.robot.head, self.robot.head.equippable_offset)
+        self.hat = Cowboy_Hat((0,0))
+        self.hat.setPickup(self.robot.head)
+        self.hat.setEquip(self.robot.head, self.robot.head.equippable_offset)
         
         self.passive_entities = []
 
         self.enemies = []
 
         self.items = []
-        # self.items.append(self.hat)
+        self.items.append(self.hat)
 
         self.spawn_entities()
 

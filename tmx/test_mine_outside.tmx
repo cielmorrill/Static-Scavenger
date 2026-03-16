@@ -249,7 +249,7 @@
    <property name="target_map" value="cave_walled_2.0.tmx"/>
    <property name="type" value="mine_entrance"/>
   </properties>
-  <object id="1" name="mine_entrance" type="entrance" x="360.816" y="242.753" width="45.7797" height="49.3939">
+  <object id="1" name="mine_entrance" type="entrance" x="360.816" y="242.753" width="45.7797" height="39.8939">
    <properties>
     <property name="spawn_x" type="int" value="308"/>
     <property name="spawn_y" type="int" value="600"/>

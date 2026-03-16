@@ -58,6 +58,7 @@ class Rock(Entity):
             alpha = max(0, min(255, alpha))
 
             self.image.set_alpha(alpha)
+            self.shadow.set_alpha(alpha)
             return
         self.removeMe = True
 
@@ -91,20 +92,24 @@ class Rock(Entity):
         rect2 = e2.getCollisionRect()
 
         collision = rect1.clip(rect2)
-        if collision.width != 0 and collision.height != 0:
-            if collision.width < collision.height:
-                e2.velocity[0] = 0
-                if e2.getPosition()[0] < self.getPosition()[0]:
-                    e2.setPosition((self.getPosition()[0] - e2.getWidth(), e2.getPosition()[1]))
-                else:
-                    e2.velocity[1] = 0
-                    e2.setPosition((self.getPosition()[0] + self.getWidth(), e2.getPosition()[1]))
+
+        if collision.width == 0 or collision.height == 0:
+            return
+
+        if collision.width < collision.height:
+            # horizontal collision
+            e2.velocity[0] = 0
+            if rect2.centerx < rect1.centerx:
+                e2.setPosition((rect1.left - e2.getWidth(), e2.getPosition()[1]))
             else:
-                e2.velocity[1] = 0
-                if e2.getPosition()[1] < self.getPosition()[1]:
-                    e2.setPosition((e2.getPosition()[0], self.getPosition()[1] - e2.getHeight()))
-                else:
-                    e2.setPosition((e2.getPosition()[0], self.getPosition()[1] + self.getHeight()))
+                e2.setPosition((rect1.right, e2.getPosition()[1]))
+        else:
+            # vertical collision
+            e2.velocity[1] = 0
+            if rect2.centery < rect1.centery:
+                e2.setPosition((e2.getPosition()[0], rect1.top - e2.getHeight()))
+            else:
+                e2.setPosition((e2.getPosition()[0], rect1.bottom))
     
     def update(self, seconds, tmx_map):
         if self.health <= 0 or not self.isAlive:

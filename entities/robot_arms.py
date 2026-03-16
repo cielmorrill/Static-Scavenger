@@ -198,6 +198,11 @@ class Robot_Arms(Entity):
         if not self.body.isAlive or self.body.health <= 0:
             self.setDying(seconds)
             return
+        
+        self.isHurt = self.body.isHurt
+
+        bodyPos = self.body.getPosition()
+        self.setPosition(vec(bodyPos[0] - 16, bodyPos[1] - 16))
 
         if self.body.animateState == "isAttacking":
             self.setAttacking()
@@ -225,9 +230,3 @@ class Robot_Arms(Entity):
         if self.sheatheCounter <= 0 and self.weaponDrawn and self.actionState not in ["isUnsheathingSword", "isAttacking"]:
             self.setSheatheSword()
             self.sheatheCounter = self.sheatheCooldown
-
-        self.isHurt = self.body.isHurt
-
-        bodyPos = self.body.getPosition()
-        self.setPosition(vec(bodyPos[0] - 16, bodyPos[1] - 16))
-        # hands sometimes get out of alignment when walking up/down. why?
