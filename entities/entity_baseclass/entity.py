@@ -45,7 +45,7 @@ class Entity(Mobile):
         self.healthCooldownTimer = 0
 
         self.knockback = vec(0, 0)
-        self.knockbackStrength = 180      # tweak this
+        self.knockbackStrength = 225      # tweak this
         self.knockbackDecay = 900      # how fast it slows
 
         # movement attributes

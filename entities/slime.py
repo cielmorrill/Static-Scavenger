@@ -165,11 +165,8 @@ class Slime(Enemy):
 
         if not self.isAlive:
             return
-        
-        if self.isHurt:
-            return
 
-        if self.seesRobot:
+        if self.seesRobot and not self.isHurt:
             self.moving = True
             self.chase(robot)
         else:
