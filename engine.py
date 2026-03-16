@@ -1,4 +1,5 @@
 import pygame
+import random
 from entities.entity_baseclass.drawable import Drawable
 from entities.robot import Robot
 from utils.gamescreen import GameScreen
@@ -10,35 +11,64 @@ from entities.objects_or_items.cowboy_hat import Cowboy_Hat
 
 class GameEngine(object):
     def __init__(self):   
-        self.tmx_map = TmxMap(fileName= "cave_walled_2.0.tmx")
+        self.transition_cooldown = 0
+        self.tmx_map = TmxMap(fileName= "test_mine_outside.tmx")
      
-        self.robot = Robot((450,400))
+        self.robot = Robot((200,400))
         shifted_pos = self.robot.getPosition()[1] + self.robot.getHeight() + GameScreen.MENU_BARRIER
-        self.robot.setPosition((450, shifted_pos))
+        self.robot.setPosition((200, shifted_pos))
 
-        self.hat = Cowboy_Hat((0,0))
-        self.hat.setPickup(self.robot.head)
-        self.hat.setEquip(self.robot.head, self.robot.head.equippable_offset)
+        # self.hat = Cowboy_Hat((0,0))
+        # self.hat.setPickup(self.robot.head)
+        # self.hat.setEquip(self.robot.head, self.robot.head.equippable_offset)
         
-        self.slime = Slime((400,600))
-
-        self.hat2 = Cowboy_Hat((0,0))
-        self.hat2.setPickup(self.slime)
-        self.hat2.setEquip(self.slime, self.slime.equippable_offset)
-
-        self.brown = Rock((400,200), "brown_rock.png")
-        self.grey = Rock((450,200), "grey_rock.png")
-        self.ore = Drawable((500,200), "ore.png")
-
-        self.passive_entities = [self.brown, self.grey]
+        self.passive_entities = []
 
         self.enemies = []
-        self.enemies.append(self.slime)
 
         self.items = []
-        self.items.append(self.hat)
-        self.items.append(self.hat2)
+        # self.items.append(self.hat)
 
+        self.spawn_entities()
+
+    def spawn_entities(self):
+        self.enemies.clear()
+        self.passive_entities.clear()
+
+        for spawn_area in self.tmx_map.spawns:
+            x, y = spawn_area["pos"]
+            w, h = spawn_area.get("size", (0,0))
+            types = spawn_area["type"].split()  # split the accepted_types string
+            spawn_chance = spawn_area.get("spawn_chance", 1.0)
+
+            tile = self.tmx_map.tmx_map.tilewidth
+            cols = int(w // tile)
+            rows = int(h // tile)
+            positions = []
+
+            for row in range(rows):
+                for col in range(cols):
+                    px = x + col * tile
+                    py = y + row * tile
+                    positions.append((px, py))
+
+            random.shuffle(positions)
+
+            for spawn_x, spawn_y in positions:
+                if random.random() <= spawn_chance:  # use the chance
+                    chosen_type = random.choice(types)
+
+                    # ENEMY SPAWNS
+
+                    if chosen_type == "slime":
+                        self.enemies.append(Slime((spawn_x, spawn_y)))
+
+                    # PASSIVE ENTITY SPAWNS
+
+                    elif chosen_type in ("brown_rock", "grey_rock"):
+                        self.passive_entities.append(
+                            Rock((spawn_x, spawn_y), f"{chosen_type}.png")
+                        )
 
     def draw(self, drawSurface):
         self.tmx_map.draw(drawSurface)
@@ -50,20 +80,16 @@ class GameEngine(object):
             e.draw(drawSurface)
 
         self.robot.draw(drawSurface)
-        # self.hat.draw(drawSurface)
 
-        self.ore.draw(drawSurface)
+        # self.ore.draw(drawSurface)
 
         for i in self.items:
             i.draw(drawSurface)
                 
         # show collision
-        # pygame.draw.rect(drawSurface, (255, 0, 0), self.slime.getCollisionRect())
         # pygame.draw.rect(drawSurface, (255, 0, 0), rectAdd(-Drawable.CAMERA_OFFSET, self.robot.getCollisionRect()))
 
-        # pygame.draw.rect(drawSurface, (255, 0, 0), rectAdd(-Drawable.CAMERA_OFFSET, self.brown.getCollisionRect()))
-        # pygame.draw.rect(drawSurface, (255, 0, 0), rectAdd(-Drawable.CAMERA_OFFSET, self.grey.getCollisionRect()))
-        # pygame.draw.rect(drawSurface, (255, 0, 0), rectAdd(-Drawable.CAMERA_OFFSET, self.robot.getAttackRect()))
+        # pygame.draw.rect(drawSurface, (255, 0, 0), rectAdd(-Drawable.CAMERA_OFFSET, self.rock.getCollisionRect()))
 
         # draw health meter
         pygame.draw.rect(drawSurface, (255, 255, 255), pygame.Rect(8,4,104,14))
@@ -95,11 +121,6 @@ class GameEngine(object):
         for i in self.items:
             i.handleEvent(event)
 
-        if event.type == pygame.MOUSEBUTTONDOWN:
-            pos = vec(*event.pos) / GameScreen.SCALE
-            newSlime = Slime(pos)
-            self.enemies.append(newSlime)
-    
     def update(self, seconds):
         self.robot.update(seconds, self.tmx_map)
 
@@ -107,9 +128,24 @@ class GameEngine(object):
             self.enemies.clear()
             return
         
+        self.transition_cooldown -= seconds
+        transition = self.tmx_map.check_transition(self.robot)
+
+        # transition map & spawn entities
+        if transition and transition["target"] and self.transition_cooldown <= 0:
+            self.tmx_map = TmxMap(fileName=transition["target"])
+            self.robot.setPosition(transition["spawn"])
+            self.transition_cooldown = 1
+            self.spawn_entities()
+            return
+                
         for e in self.enemies[:]:
             if e.removeMe:
                 self.enemies.remove(e)
+
+        for p in self.passive_entities[:]:
+            if p.removeMe:
+                self.passive_entities.remove(p)
 
         # check for enemy collision with robot & robot attack collision w/ enemies
         for e in self.enemies:
@@ -173,6 +209,16 @@ class GameEngine(object):
         for i in range(len(self.passive_entities)):
             for j in range(i + 1, len(self.passive_entities)):
                 e1 = self.passive_entities[i]
+                e2 = self.passive_entities[j]
+
+                collision = e1.getCollisionRect().clip(e2.getCollisionRect())
+                if collision.width != 0 and collision.height != 0 and e1.isAlive and e2.isAlive:
+                    e1.resolveCollision(e2)
+
+        # check for enemy-passive entity collision
+        for i in range(len(self.enemies)):
+            for j in range(len(self.passive_entities)):
+                e1 = self.enemies[i]
                 e2 = self.passive_entities[j]
 
                 collision = e1.getCollisionRect().clip(e2.getCollisionRect())

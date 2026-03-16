@@ -22,13 +22,48 @@ class TmxMap(object):
         for layer in self.tmx_map.visible_layers:
             if hasattr(layer, "tiles"):
                 for x, y, tile in layer.tiles():
-                    self.map_surface.blit(
-                        tile,
-                        (x * self.tmx_map.tilewidth,
-                        y * self.tmx_map.tileheight)
-                    )
+                    if tile:
+                        self.map_surface.blit(
+                            tile,
+                            (x * self.tmx_map.tilewidth,
+                            y * self.tmx_map.tileheight)
+                        )
         
         GameScreen.WORLD_SIZE = vec(self.map_width, self.map_height)
+
+        self.transitions = []
+
+        if "Transitions" in self.tmx_map.layernames:
+            layer = self.tmx_map.get_layer_by_name("Transitions")
+
+            for obj in layer:
+                rect = pygame.Rect(obj.x, obj.y, obj.width, obj.height)
+
+                self.transitions.append({
+                    "rect": rect,
+                    "target": getattr(obj, "target_map", None),
+                    "spawn": (
+                        getattr(obj, "spawn_x", 0),
+                        getattr(obj, "spawn_y", 0)
+                    )
+                })
+
+        self.spawns = []
+
+        if "Spawns" in self.tmx_map.layernames:
+            layer = self.tmx_map.get_layer_by_name("Spawns")
+
+            for obj in layer:
+                spawn_type = obj.type
+
+                self.spawns.append({
+                    "type": obj.properties.get("accepted_types", ""),  # string like "brown_rock grey_rock" or "slime"
+                    "spawn_chance": float(obj.properties.get("spawn_chance", 1.0)),
+                    "pos": (obj.x, obj.y),
+                    "size": (obj.width, obj.height)
+                })
+
+                #  {'type': 'slime', 'pos': (400,600)},
     
     def draw(self, drawSurface):        
         drawSurface.blit(self.map_surface, pyVec(self.position - Drawable.CAMERA_OFFSET))
@@ -97,9 +132,8 @@ class TmxMap(object):
 
         return blocked_rects
     
-    # def spawn(self):
-    #     x = random.randint(0, map_width)
-    #     y = random.randint(0, map_height)
-
-    #     if not game_map.is_blocked(x, y):
-    #         break
+    def check_transition(self, entity):
+        for t in self.transitions:
+            if entity.getCollisionRect().colliderect(t["rect"]):
+                return t
+        return None

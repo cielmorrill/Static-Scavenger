@@ -15,8 +15,9 @@ class Rock(Entity):
 
         self.animate = False
         self.frame  = 0
+        self.createShadow(width_scale=.95)
 
-        self.collisionRect = Rect(0,8,int(self.getWidth()),int(self.getHeight() - 10))
+        self.collisionRect = Rect(4,8,int(self.getWidth() - 8),int(self.getHeight() - 12))
 
         self.isDamaged = False
         self.isAlive = True
@@ -32,6 +33,13 @@ class Rock(Entity):
 
     def getCollisionRect(self):
         return rectAdd(self.getPosition(), self.collisionRect)
+
+    def getShadowPos(self):
+        shadow_pos = super().getShadowPos()
+        
+        shadow_pos[1] -= 6
+
+        return shadow_pos
 
     def setDying(self, seconds):
         self.row = 4
