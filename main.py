@@ -15,7 +15,7 @@ def main():
         joystick = pygame.joystick.Joystick(0)
         joystick.init()
 
-    #Get the screen
+    #Get the screen 
     screen = pygame.display.set_mode(pyVec(GameScreen.UPSCALED))
     drawSurface = pygame.Surface(pyVec(GameScreen.RESOLUTION))
 

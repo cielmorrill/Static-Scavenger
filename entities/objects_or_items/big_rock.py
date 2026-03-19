@@ -9,7 +9,7 @@ from utils.spriteManager import SpriteManager
     # stats (health/max, attack)
     # collision (world boundaries, other entities)
 
-class Rock(Entity):
+class Big_Rock(Entity):
     def __init__(self, position, fileName="", offset=(0,0), maxSpeed=0, row = 0, nFrames = 1):
         super().__init__(position, fileName, offset, maxSpeed, row, nFrames)
 
@@ -17,14 +17,14 @@ class Rock(Entity):
         self.frame  = 0
         self.createShadow(width_scale=.95)
 
-        self.collisionRect = Rect(4,8,int(self.getWidth() - 8),int(self.getHeight() - 12))
+        self.collisionRect = Rect(4,4,int(self.getWidth() - 8),int(self.getHeight() - 8))
 
         self.isDamaged = False
         self.isAlive = True
         self.removeMe = False
 
         # stats
-        self.maxHealth = 100.0
+        self.maxHealth = 300.0
         self.health = self.maxHealth
         self.hurtTimerBase = 1.0
         self.hurtTimer = 1.0

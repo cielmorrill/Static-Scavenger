@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.10" tiledversion="1.11.2" orientation="orthogonal" renderorder="right-down" width="30" height="30" tilewidth="32" tileheight="32" infinite="0" nextlayerid="13" nextobjectid="30">
+<map version="1.10" tiledversion="1.11.2" orientation="orthogonal" renderorder="right-down" width="30" height="30" tilewidth="32" tileheight="32" infinite="0" nextlayerid="13" nextobjectid="34">
  <tileset firstgid="1" source="cave_tiles_1.3.tsx"/>
  <layer id="1" name="black" width="30" height="30">
   <data encoding="csv">
@@ -250,8 +250,7 @@
   <object id="8" name="rock" x="772" y="190" width="160" height="96">
    <properties>
     <property name="accepted_types" value="brown_rock grey_rock"/>
-    <property name="count" type="int" value="15"/>
-    <property name="spawn_chance" type="float" value="0.3"/>
+    <property name="spawn_chance" type="float" value="0.4"/>
    </properties>
   </object>
   <object id="12" name="enemy" x="577.333" y="544.667" width="32" height="32">
@@ -293,14 +292,14 @@
    <properties>
     <property name="accepted_types" value="slime"/>
     <property name="count" type="int" value="1"/>
-    <property name="spawn_chance" type="float" value="0.3"/>
+    <property name="spawn_chance" type="float" value="0.5"/>
    </properties>
   </object>
   <object id="18" name="enemy" x="352" y="768" width="32" height="32">
    <properties>
     <property name="accepted_types" value="slime"/>
     <property name="count" type="int" value="1"/>
-    <property name="spawn_chance" type="float" value="0.3"/>
+    <property name="spawn_chance" type="float" value="0.5"/>
    </properties>
   </object>
   <object id="19" name="enemy" x="576" y="224" width="32" height="32">
@@ -313,64 +312,73 @@
   <object id="20" name="rock" x="416" y="321" width="160" height="96">
    <properties>
     <property name="accepted_types" value="brown_rock grey_rock"/>
-    <property name="count" type="int" value="15"/>
-    <property name="spawn_chance" type="float" value="0.3"/>
+    <property name="spawn_chance" type="float" value="0.4"/>
    </properties>
   </object>
   <object id="21" name="rock" x="416" y="160" width="160" height="96">
    <properties>
     <property name="accepted_types" value="brown_rock grey_rock"/>
-    <property name="count" type="int" value="15"/>
-    <property name="spawn_chance" type="float" value="0.3"/>
+    <property name="spawn_chance" type="float" value="0.4"/>
    </properties>
   </object>
   <object id="22" name="rock" x="642.667" y="514" width="160" height="96">
    <properties>
     <property name="accepted_types" value="brown_rock grey_rock"/>
-    <property name="count" type="int" value="15"/>
-    <property name="spawn_chance" type="float" value="0.3"/>
+    <property name="spawn_chance" type="float" value="0.4"/>
    </properties>
   </object>
   <object id="23" name="rock" x="385.334" y="546" width="160" height="96">
    <properties>
     <property name="accepted_types" value="brown_rock grey_rock"/>
-    <property name="count" type="int" value="15"/>
-    <property name="spawn_chance" type="float" value="0.3"/>
+    <property name="spawn_chance" type="float" value="0.4"/>
    </properties>
   </object>
   <object id="24" name="rock" x="160" y="642" width="160" height="96">
    <properties>
     <property name="accepted_types" value="brown_rock grey_rock"/>
-    <property name="count" type="int" value="15"/>
-    <property name="spawn_chance" type="float" value="0.3"/>
+    <property name="spawn_chance" type="float" value="0.4"/>
    </properties>
   </object>
   <object id="25" name="rock" x="707" y="356" width="128" height="96">
    <properties>
     <property name="accepted_types" value="brown_rock grey_rock"/>
-    <property name="count" type="int" value="12"/>
-    <property name="spawn_chance" type="float" value="0.3"/>
+    <property name="spawn_chance" type="float" value="0.4"/>
    </properties>
   </object>
   <object id="26" name="rock" x="676.333" y="638" width="128" height="96">
    <properties>
     <property name="accepted_types" value="brown_rock grey_rock"/>
-    <property name="count" type="int" value="12"/>
-    <property name="spawn_chance" type="float" value="0.3"/>
+    <property name="spawn_chance" type="float" value="0.4"/>
    </properties>
   </object>
   <object id="27" name="rock" x="449" y="804" width="128" height="96">
    <properties>
     <property name="accepted_types" value="brown_rock grey_rock"/>
-    <property name="count" type="int" value="12"/>
-    <property name="spawn_chance" type="float" value="0.3"/>
+    <property name="spawn_chance" type="float" value="0.4"/>
    </properties>
   </object>
   <object id="28" name="rock" x="131" y="384" width="128" height="96">
    <properties>
     <property name="accepted_types" value="brown_rock grey_rock"/>
-    <property name="count" type="int" value="12"/>
-    <property name="spawn_chance" type="float" value="0.3"/>
+    <property name="spawn_chance" type="float" value="0.4"/>
+   </properties>
+  </object>
+  <object id="30" name="big_rock" x="322" y="382" width="32" height="32">
+   <properties>
+    <property name="accepted_types" value="big_brown_rock"/>
+    <property name="spawn_chance" type="float" value="8"/>
+   </properties>
+  </object>
+  <object id="32" name="big_rock" x="578" y="446" width="32" height="32">
+   <properties>
+    <property name="accepted_types" value="big_brown_rock"/>
+    <property name="spawn_chance" type="float" value="8"/>
+   </properties>
+  </object>
+  <object id="33" name="big_rock" x="640" y="800" width="32" height="32">
+   <properties>
+    <property name="accepted_types" value="big_brown_rock"/>
+    <property name="spawn_chance" type="float" value="8"/>
    </properties>
   </object>
  </objectgroup>

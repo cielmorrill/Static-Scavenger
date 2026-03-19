@@ -96,6 +96,8 @@ class Entity(Mobile):
     def getHurt(self, attack, attackerPos):
         if self.isInvincible or self.isHurt or not self.isAlive:
             return
+        if self.health < 0:
+            self.isAlive = False
 
         self.isHurt = True
         self.hurtTimer = self.hurtTimerBase

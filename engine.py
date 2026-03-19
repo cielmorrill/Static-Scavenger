@@ -1,6 +1,7 @@
 import pygame
 import random
 from entities.entity_baseclass.drawable import Drawable
+from entities.objects_or_items.big_rock import Big_Rock
 from entities.robot import Robot
 from utils.gamescreen import GameScreen
 from utils.vector import vec, rectAdd
@@ -8,6 +9,7 @@ from tmxmap import TmxMap
 from entities.slime import Slime
 from entities.objects_or_items.rock import Rock
 from entities.objects_or_items.cowboy_hat import Cowboy_Hat
+from entities.entity_baseclass.menu_item import Menu_Item
 
 class GameEngine(object):
     def __init__(self):   
@@ -30,6 +32,8 @@ class GameEngine(object):
         # self.items.append(self.hat)
 
         self.spawn_entities()
+
+        self.item_choice = Menu_Item((120, 4), "item_choice.png")
 
     def spawn_entities(self):
         self.enemies.clear()
@@ -68,6 +72,10 @@ class GameEngine(object):
                     elif chosen_type in ("brown_rock", "grey_rock"):
                         self.passive_entities.append(
                             Rock((spawn_x, spawn_y), f"{chosen_type}.png")
+                        )
+                    elif chosen_type in ("big_brown_rock"):
+                        self.passive_entities.append(
+                            Big_Rock((spawn_x, spawn_y), f"{chosen_type}.png")
                         )
 
     def draw(self, drawSurface):
@@ -108,6 +116,8 @@ class GameEngine(object):
         if scaledWidth < 0:
             scaledWidth = 0
         pygame.draw.rect(drawSurface,(89, 232, 235), pygame.Rect(10,24,scaledWidth,10))
+
+        self.item_choice.draw(drawSurface)
             
     def handleEvent(self, event):    
         self.robot.handleEvent(event)
@@ -121,7 +131,11 @@ class GameEngine(object):
         for i in self.items:
             i.handleEvent(event)
 
+        self.item_choice.handleEvent(event)
+
     def update(self, seconds):
+        self.item_choice.update(seconds)
+
         self.robot.update(seconds, self.tmx_map)
 
         if not self.robot.isAlive:

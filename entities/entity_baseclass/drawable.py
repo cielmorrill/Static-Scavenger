@@ -75,6 +75,8 @@ class Drawable(object):
         pass
       
     def getCollisionRect(self):
+        if self.collisionRect is None:
+            raise Exception(f"{self} has no collisionRect!")
         return rectAdd(self.getPosition(), self.image.get_rect())
     
     def setCollisionRect(self, newRect):
