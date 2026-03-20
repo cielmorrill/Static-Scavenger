@@ -317,7 +317,7 @@
   </object>
   <object id="21" name="rock" x="416" y="160" width="160" height="96">
    <properties>
-    <property name="accepted_types" value="brown_rock grey_rock"/>
+    <property name="accepted_types" value="brown_rock grey_rock bomb_rock"/>
     <property name="spawn_chance" type="float" value="0.4"/>
    </properties>
   </object>
@@ -329,7 +329,7 @@
   </object>
   <object id="23" name="rock" x="385.334" y="546" width="160" height="96">
    <properties>
-    <property name="accepted_types" value="brown_rock grey_rock"/>
+    <property name="accepted_types" value="brown_rock grey_rock bomb_rock"/>
     <property name="spawn_chance" type="float" value="0.4"/>
    </properties>
   </object>
@@ -341,13 +341,13 @@
   </object>
   <object id="25" name="rock" x="707" y="356" width="128" height="96">
    <properties>
-    <property name="accepted_types" value="brown_rock grey_rock"/>
+    <property name="accepted_types" value="brown_rock grey_rock bomb_rock"/>
     <property name="spawn_chance" type="float" value="0.4"/>
    </properties>
   </object>
   <object id="26" name="rock" x="676.333" y="638" width="128" height="96">
    <properties>
-    <property name="accepted_types" value="brown_rock grey_rock"/>
+    <property name="accepted_types" value="brown_rock grey_rock bomb_rock"/>
     <property name="spawn_chance" type="float" value="0.4"/>
    </properties>
   </object>
@@ -359,7 +359,7 @@
   </object>
   <object id="28" name="rock" x="131" y="384" width="128" height="96">
    <properties>
-    <property name="accepted_types" value="brown_rock grey_rock"/>
+    <property name="accepted_types" value="brown_rock grey_rock bomb_rock"/>
     <property name="spawn_chance" type="float" value="0.4"/>
    </properties>
   </object>

@@ -85,7 +85,6 @@ class Rock(Entity):
                 row = 4
         self.row = row
         self.image = SpriteManager.getInstance().getSprite(self.fileName, (self.row, self.frame))
-        # print("rock row ", self.row)
 
     def resolveCollision(self, e2):
         rect1 = self.getCollisionRect()

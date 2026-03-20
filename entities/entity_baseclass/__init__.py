@@ -4,3 +4,4 @@ from .enemy import *
 from .entity import *
 from .menu_item import *
 from .mobile import *
+from .hurtable import *

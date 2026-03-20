@@ -1,5 +1,6 @@
 import pygame
 import random
+from entities.bomb_rock import Bomb_Rock
 from entities.entity_baseclass.drawable import Drawable
 from entities.objects_or_items.big_rock import Big_Rock
 from entities.robot import Robot
@@ -27,6 +28,8 @@ class GameEngine(object):
         self.passive_entities = []
 
         self.enemies = []
+
+        self.hurtables = []
 
         self.items = []
         # self.items.append(self.hat)
@@ -77,6 +80,10 @@ class GameEngine(object):
                         self.passive_entities.append(
                             Big_Rock((spawn_x, spawn_y), f"{chosen_type}.png")
                         )
+                    elif chosen_type in ("bomb_rock"):
+                        self.passive_entities.append(
+                            Bomb_Rock((spawn_x, spawn_y), f"{chosen_type}.png")
+                        )
 
     def draw(self, drawSurface):
         self.tmx_map.draw(drawSurface)
@@ -86,6 +93,9 @@ class GameEngine(object):
 
         for e in self.enemies:
             e.draw(drawSurface)
+
+        for h in self.hurtables:
+            h.draw(drawSurface)
 
         self.robot.draw(drawSurface)
 
@@ -131,6 +141,9 @@ class GameEngine(object):
         for i in self.items:
             i.handleEvent(event)
 
+        for h in self.hurtables:
+            h.handleEvent(event)
+
         self.item_choice.handleEvent(event)
 
     def update(self, seconds):
@@ -152,15 +165,32 @@ class GameEngine(object):
             self.transition_cooldown = 1
             self.spawn_entities()
             return
-                
+
+        # HANDLE AUXILIARY SPAWNS
+        for p in self.passive_entities:
+            for obj in p.hurtable:
+                self.hurtables.append(obj)
+            p.hurtable.clear()
+
+        for e in self.enemies:
+            for obj in e.hurtable:
+                self.hurtables.append(obj)
+            e.hurtable.clear()
+
+        # HANDLE REMOVAL OF ENTITIES
         for e in self.enemies[:]:
             if e.removeMe:
                 self.enemies.remove(e)
+
+        for h in self.hurtables[:]:
+            if h.removeMe:
+                self.hurtables.remove(h)
 
         for p in self.passive_entities[:]:
             if p.removeMe:
                 self.passive_entities.remove(p)
 
+        # HANDLE COLLISIONS
         # check for enemy collision with robot & robot attack collision w/ enemies
         for e in self.enemies:
             collision = e.getCollisionRect().clip(self.robot.getCollisionRect())
@@ -180,6 +210,24 @@ class GameEngine(object):
                     # flash red, knockback, temporary invulnerability, health decrease
                     if not e.isHurt and e.isAlive:
                         e.getHurt(self.robot.attackPower, self.robot.getPosition())
+
+        for h in self.hurtables:
+            collision = h.getCollisionRect().clip(self.robot.getCollisionRect())
+            if collision.width != 0 and collision.height != 0:
+                if not self.robot.isHurt and self.robot.isAlive:
+                    self.robot.getHurt(h.attackPower, h.getPosition())
+
+            for e in self.enemies:
+                collision = h.getCollisionRect().clip(e.getCollisionRect())
+                if collision.width != 0 and collision.height != 0:
+                    if not e.isHurt and e.isAlive:
+                        e.getHurt(h.attackPower, h.getPosition())
+            
+            for p in self.passive_entities:
+                collision = h.getCollisionRect().clip(p.getCollisionRect())
+                if collision.width != 0 and collision.height != 0:
+                    if not p.isDamaged and p.isAlive:
+                        p.getHurt(h.attackPower, h.getPosition())
 
         # check for entity collision with robot
         for p in self.passive_entities:
@@ -239,8 +287,12 @@ class GameEngine(object):
                 if collision.width != 0 and collision.height != 0 and e1.isAlive and e2.isAlive:
                     e1.resolveCollision(e2)
 
+        # UPDATE ENTITIES
         for e in self.enemies:
             e.update(seconds, self.robot, self.tmx_map)
+
+        for h in self.hurtables:
+            h.update(seconds)
 
         for p in self.passive_entities:
             p.update(seconds, self.tmx_map)

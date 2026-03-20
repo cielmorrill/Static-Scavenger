@@ -1,8 +1,7 @@
 from .entity_baseclass import Enemy
 import pygame
 from utils.vector import vec, magnitude, scale, sign
-from pygame import image, Surface, SRCALPHA, Rect
-from utils.gamescreen import GameScreen
+from pygame import Rect
 from .entity_baseclass import Drawable
 
 class Slime(Enemy):

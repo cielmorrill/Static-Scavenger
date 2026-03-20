@@ -19,6 +19,7 @@ class Entity(Mobile):
         self.direction = None
         self.animate = True
         self.equippable_offset = vec(0,0)
+        self.hurtable = []
 
         self.collisionRect = Rect(0,0,int(self.getWidth()),int(self.getHeight()))
 
