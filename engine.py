@@ -1,16 +1,13 @@
 import pygame
 import random
-from entities.bomb_rock import Bomb_Rock
-from entities.entity_baseclass.drawable import Drawable
-from entities.objects_or_items.big_rock import Big_Rock
-from entities.robot import Robot
+
+from entities.entity_baseclass import *
+from entities.objects_or_items import *
+from entities import *
+
 from utils.gamescreen import GameScreen
 from utils.vector import vec, rectAdd
 from tmxmap import TmxMap
-from entities.slime import Slime
-from entities.objects_or_items.rock import Rock
-from entities.objects_or_items.cowboy_hat import Cowboy_Hat
-from entities.entity_baseclass.menu_item import Menu_Item
 
 class GameEngine(object):
     def __init__(self):   
@@ -73,16 +70,20 @@ class GameEngine(object):
                     # PASSIVE ENTITY SPAWNS
 
                     elif chosen_type in ("brown_rock", "grey_rock"):
-                        self.passive_entities.append(
-                            Rock((spawn_x, spawn_y), f"{chosen_type}.png")
-                        )
+                        rock = Rock((spawn_x, spawn_y), f"{chosen_type}.png")
+                        rock.health = rock.maxHealth * random.uniform(0.25, 1.0)  # randomize health between 25% and 100%
+                        self.passive_entities.append(rock)
                     elif chosen_type in ("big_brown_rock"):
-                        self.passive_entities.append(
-                            Big_Rock((spawn_x, spawn_y), f"{chosen_type}.png")
-                        )
+                        big_rock = Big_Rock((spawn_x, spawn_y), f"{chosen_type}.png")
+                        big_rock.health = big_rock.maxHealth * random.uniform(0.25, 1.0)  # randomize health between 25% and 100%
+                        self.passive_entities.append(big_rock)
                     elif chosen_type in ("bomb_rock"):
                         self.passive_entities.append(
                             Bomb_Rock((spawn_x, spawn_y), f"{chosen_type}.png")
+                        )
+                    elif chosen_type in ("treasure_chest"):
+                        self.passive_entities.append(
+                            Treasure_Chest((spawn_x, spawn_y))
                         )
 
     def draw(self, drawSurface):

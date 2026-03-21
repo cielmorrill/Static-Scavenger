@@ -2,7 +2,7 @@ from .entity_baseclass import Hurtable
 from pygame import Rect
 
 class Explosion(Hurtable):
-    def __init__(self, position, fileName="explosion.png", offset=(0,0), maxSpeed=0, row = 0, nFrames = 5):
+    def __init__(self, position, fileName="explosion.png", offset=(0,0), maxSpeed=0, row = 0, nFrames = 6):
         super().__init__(position, fileName, offset, maxSpeed, row, nFrames)
 
         self.animate = True

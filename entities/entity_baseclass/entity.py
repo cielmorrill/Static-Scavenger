@@ -190,7 +190,7 @@ class Entity(Mobile):
             x_percent = abs((x - tile.x) / tile.width)
             y_percent = abs((y - tile.y) / tile.height)
             if x_percent > y_percent:
-            # LEFT side of tile
+                # LEFT side of tile
                 if x + width > tile.left and x < tile.left:
                     x = tile.left - width
                     self.velocity[0] = 0

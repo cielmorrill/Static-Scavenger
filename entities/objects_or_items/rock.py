@@ -1,4 +1,5 @@
 from pygame.locals import Rect
+from utils.soundManager import SoundManager
 from utils.vector import vec, rectAdd
 from ..entity_baseclass.entity import Entity
 from utils.spriteManager import SpriteManager
@@ -46,6 +47,8 @@ class Rock(Entity):
         self.image = SpriteManager.getInstance().getSprite(self.fileName, (self.row, self.frame))
         self.isAlive = False
         self.shadow = None
+        sm = SoundManager.getInstance()
+        sm.playSFX("rock_destroy.mp3")
         self.setDead(seconds)
 
     def setDead(self, seconds):
@@ -69,6 +72,8 @@ class Rock(Entity):
         self.isDamaged = True
         self.hurtTimer = self.hurtTimerBase
         self.health -= attack
+        sm = SoundManager.getInstance()
+        sm.playSFX("rock_hit.wav")
         
     def updateHurtState(self, seconds):
         if self.isDamaged:

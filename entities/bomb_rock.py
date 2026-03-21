@@ -1,3 +1,5 @@
+from utils.soundManager import SoundManager
+
 from .entity_baseclass import Entity
 from pygame import Rect
 from utils.vector import vec
@@ -10,7 +12,7 @@ class Bomb_Rock(Entity):
         self.animate = False
         self.moving = False
         self.frame  = 0
-        self.setFPS(8)
+        self.setFPS(12)
         self.createShadow(width_scale=.95)
 
         self.collisionRect = Rect(4,8,int(self.getWidth() - 8),int(self.getHeight() - 12))
@@ -55,6 +57,7 @@ class Bomb_Rock(Entity):
             self.frame = 0
             self.nFrames = 2
             self.counter = 0
+            self.setFPS(8)
         if self.counter >= 3:
             self.callExplosion()
             self.removeMe = True
@@ -65,6 +68,8 @@ class Bomb_Rock(Entity):
         pos[1] = self.position[1] - self.getHeight()/2
         explosion = Explosion(pos)
         self.hurtable.append(explosion)
+        sm = SoundManager.getInstance()
+        sm.playSFX("explosion.mp3")
 
     def resolveCollision(self, e2):
         rect1 = self.getCollisionRect()

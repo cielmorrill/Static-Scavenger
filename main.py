@@ -1,5 +1,6 @@
 import pygame
 from engine import GameEngine
+from utils.soundManager import SoundManager
 from utils.vector import vec, pyVec
 from utils.gamescreen import *
 
@@ -24,6 +25,9 @@ def main():
     gameClock = pygame.time.Clock()
     
     RUNNING = True
+
+    sm = SoundManager.getInstance()
+    sm.playBGM("Pookatori and Friends.mp3")
     
     while RUNNING:
         gameEngine.draw(drawSurface)

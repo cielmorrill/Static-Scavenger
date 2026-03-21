@@ -56,10 +56,7 @@ class SpriteManager(object):
     }
     
     # A list of images that require to be loaded with transparency
-    _TRANSPARENCY = ["water-lily.png",
-                     "rose.png",
-                     "plants.png",
-                     "robot_body.png",
+    _TRANSPARENCY = ["robot_body.png",
                      "robot_head.png",
                      "robot_arms.png",
                      "slime_sprite.png",
@@ -69,7 +66,9 @@ class SpriteManager(object):
                      "cowboy_hat.png",
                      "big_brown_rock.png",
                      "bomb_rock.png",
-                     "explosion.png"]
+                     "explosion.png",
+                     "treasure_chest_bottom.png",
+                     "treasure_chest_lid.png"]
     
     # A list of images that require to be loaded with a color key
     _COLOR_KEY = [""] # ex "kirby.png"
