@@ -1,4 +1,4 @@
-from random import random
+from numpy import random
 from pygame.locals import Rect
 from utils.soundManager import SoundManager
 from utils.vector import magnitude, vec, rectAdd
@@ -19,7 +19,7 @@ class Treasure_Chest_Lid(Entity):
         self.removeMe = False
 
         # stats
-        self.maxHealth = 100.0
+        self.maxHealth = 5.0
         self.health = self.maxHealth
         self.hurtTimerBase = 1.0
         self.hurtTimer = 1.0

@@ -19,15 +19,8 @@ class Treasure_Chest(Entity):
         self.collisionRect = Rect(4,8,int(self.getWidth()),int(self.getHeight()))
 
         self.isDamaged = False
+        self.isInvincible = True
         self.removeMe = False
-
-        # stats
-        self.maxHealth = 100.0
-        self.health = self.maxHealth
-        self.hurtTimerBase = 1.0
-        self.hurtTimer = 1.0
-
-        self.counter = 0
 
     def getShadowPos(self):
         shadow_pos = super().getShadowPos()

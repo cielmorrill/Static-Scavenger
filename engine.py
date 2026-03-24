@@ -10,7 +10,9 @@ from utils.vector import vec, rectAdd
 from tmxmap import TmxMap
 
 class GameEngine(object):
-    def __init__(self):   
+    def __init__(self):
+        self.gameover = False
+        self.deathTimer = 0   
         self.transition_cooldown = 0
         self.tmx_map = TmxMap(fileName= "test_mine_outside.tmx")
      
@@ -154,6 +156,9 @@ class GameEngine(object):
 
         if not self.robot.isAlive:
             self.enemies.clear()
+            self.deathTimer += seconds
+            if self.deathTimer >= 5:
+                self.gameover = True
             return
         
         self.transition_cooldown -= seconds

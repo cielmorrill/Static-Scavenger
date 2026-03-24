@@ -1,6 +1,7 @@
 import pygame
 from engine import GameEngine
 from utils.soundManager import SoundManager
+from UI.menu import EventMenu
 from utils.vector import vec, pyVec
 from utils.gamescreen import *
 
@@ -21,6 +22,43 @@ def main():
     drawSurface = pygame.Surface(pyVec(GameScreen.RESOLUTION))
 
     gameEngine = GameEngine()
+    state = "menu"
+
+    mainMenu = EventMenu("background.png", fontName="default8")
+
+    mainMenu.addOption(
+        "start",
+        "Press 1 to Start Game",
+        GameScreen.RESOLUTION // 2 - vec(0,50),
+        lambda x: x.type == pygame.KEYDOWN and x.key == pygame.K_1,
+        center="both"
+    )
+
+    mainMenu.addOption(
+        "exit",
+        "Press 2 to Exit Game",
+        GameScreen.RESOLUTION // 2 + vec(0,50),
+        lambda x: x.type == pygame.KEYDOWN and x.key == pygame.K_2,
+        center="both"
+    )
+
+    deathMenu = EventMenu("background.png", fontName="default8")
+
+    deathMenu.addOption(
+        "continue",
+        "Press 1 to Continue",
+        GameScreen.RESOLUTION // 2 - vec(0,50),
+        lambda x: x.type == pygame.KEYDOWN and x.key == pygame.K_1,
+        center="both"
+    )
+
+    deathMenu.addOption(
+        "quit",
+        "Press 2 to Quit to Menu",
+        GameScreen.RESOLUTION // 2 + vec(0,50),
+        lambda x: x.type == pygame.KEYDOWN and x.key == pygame.K_2,
+        center="both"
+    )
     
     gameClock = pygame.time.Clock()
     
@@ -30,26 +68,67 @@ def main():
     sm.playBGM("Pookatori and Friends.mp3")
     
     while RUNNING:
-        gameEngine.draw(drawSurface)
-        
+        # DRAW
+        if state == "menu":
+            mainMenu.draw(drawSurface)
+        elif state == "game":
+            gameEngine.draw(drawSurface)
+        elif state == "inventory":
+            gameEngine.draw(drawSurface)
+            pass
+        elif state == "death":
+            gameEngine.draw(drawSurface)
+            deathMenu.draw(drawSurface)
+
         pygame.transform.scale(drawSurface,
-                               pyVec(GameScreen.UPSCALED),
-                               screen)
-     
+                            pyVec(GameScreen.UPSCALED),
+                            screen)
+
         pygame.display.flip()
-        
-        # event handling, gets all event from the eventqueue
+
+        # EVENT HANDLING
         for event in pygame.event.get():
-            # only do something if the event is of type QUIT
             if event.type == pygame.QUIT or (event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE):
-                # change the value to False, to exit the main loop
                 RUNNING = False
-            else:
-                gameEngine.handleEvent(event)
-        
+
+            elif state == "menu":
+                choice = mainMenu.handleEvent(event)
+
+                if choice == "start":
+                    state = "game"
+                elif choice == "exit":
+                    RUNNING = False
+
+            elif state == "game":
+                if event.type == pygame.KEYDOWN and event.key == pygame.K_i:
+                    state = "inventory"
+                else:
+                    gameEngine.handleEvent(event)
+
+            elif state == "inventory":
+                if event.type == pygame.KEYDOWN and event.key == pygame.K_i:
+                    state = "game"
+                else:
+                    pass
+            
+            elif state == "death":
+                choice = deathMenu.handleEvent(event)
+
+                if choice == "continue":
+                    gameEngine = GameEngine()
+                    state = "game"
+
+                elif choice == "quit":
+                    state = "menu"
+
+        # UPDATE
         gameClock.tick(60)
         seconds = gameClock.get_time() / 1000
-        gameEngine.update(seconds)
+
+        if state in ["game", "death"]:
+            gameEngine.update(seconds)
+            if state == "game" and gameEngine.gameover:
+                state = "death"
     
     pygame.quit()
 
