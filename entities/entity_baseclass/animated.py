@@ -5,7 +5,7 @@ from utils.spriteManager import *
 from utils.vector import *
 
 class Animated(Drawable):
-    def __init__(self, position=vec(0,0), fileName="", offset=None, row = 0, nFrames = 1):
+    def __init__(self, position=vec(0,0), fileName="", offset=(0,0), row = 0, nFrames = 1):
         super().__init__(position, fileName, offset)
 
         self.fileName = fileName

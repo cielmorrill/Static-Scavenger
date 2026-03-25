@@ -2,10 +2,10 @@ from numpy import random
 from pygame.locals import Rect
 from utils.soundManager import SoundManager
 from utils.vector import magnitude, vec, rectAdd
-from ..entity_baseclass.entity import Entity
+from ..entity_baseclass.object_class import Object_Class
 from utils.spriteManager import SpriteManager
 
-class Treasure_Chest_Lid(Entity):
+class Treasure_Chest_Lid(Object_Class):
     def __init__(self, body, position, fileName="treasure_chest_lid.png", offset=(0,0), maxSpeed=0, row = 0, nFrames = 1):
         super().__init__(position, fileName, offset, maxSpeed, row, nFrames)
 
@@ -49,14 +49,9 @@ class Treasure_Chest_Lid(Entity):
             self.deathVelocity = vec(0,0)
             self.setDead(seconds)
 
-    def setDead(self, seconds):
-        self.isAlive = False
-        self.animate = False
-        self.removeMe = True
-
     def update(self, seconds, tmx_map):
         super().update(seconds, tmx_map)
 
-        if self.body.health <= 0:
+        if self.health <= 0:
             self.setDying(seconds)
             return

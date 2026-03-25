@@ -1,3 +1,4 @@
+from numpy import tile
 import pygame
 import random
 
@@ -14,7 +15,7 @@ class GameEngine(object):
         self.gameover = False
         self.deathTimer = 0   
         self.transition_cooldown = 0
-        self.tmx_map = TmxMap(fileName= "test_mine_outside.tmx")
+        self.tmx_map = TmxMap(fileName= "vine_cave_test.tmx")
      
         self.robot = Robot((200,400))
         shifted_pos = self.robot.getPosition()[1] + self.robot.getHeight() + GameScreen.MENU_BARRIER
@@ -83,6 +84,10 @@ class GameEngine(object):
                         self.passive_entities.append(
                             Bomb_Rock((spawn_x, spawn_y), f"{chosen_type}.png")
                         )
+
+
+                    # ITEM SPAWNS
+
                     elif chosen_type in ("treasure_chest"):
                         self.passive_entities.append(
                             Treasure_Chest((spawn_x, spawn_y))
@@ -90,6 +95,9 @@ class GameEngine(object):
 
     def draw(self, drawSurface):
         self.tmx_map.draw(drawSurface)
+
+        for tile in self.tmx_map.animated_tiles:
+            tile.draw(drawSurface)
 
         for p in self.passive_entities:
             p.draw(drawSurface)
@@ -149,7 +157,10 @@ class GameEngine(object):
 
         self.item_choice.handleEvent(event)
 
-    def update(self, seconds):
+    def update(self, seconds):   
+        for tile in self.tmx_map.animated_tiles:
+            tile.update(seconds)     
+            
         self.item_choice.update(seconds)
 
         self.robot.update(seconds, self.tmx_map)

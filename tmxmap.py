@@ -1,6 +1,7 @@
 import pygame
 from entities.entity_baseclass import Drawable
 from os.path import join
+from entities.entity_baseclass.animated import Animated
 from utils.gamescreen import GameScreen
 from utils.vector import vec, pyVec
 from pytmx import load_pygame
@@ -64,6 +65,48 @@ class TmxMap(object):
                 })
 
                 #  {'type': 'slime', 'pos': (400,600)},
+
+        self.animated_tiles = []
+
+        if "Animated" in self.tmx_map.layernames:
+            layer = self.tmx_map.get_layer_by_name("Animated")
+
+            for tile in layer:
+                # anim = Animated(
+                #     position=(tile.x, tile.y),
+                #     fileName=getattr(tile, "fileName", None),
+                #     row = getattr(tile, "row", 0),
+                #     nFrames=getattr(tile, "nFrames", 1)
+                # )
+                # anim.setFPS(getattr(tile, "fps", 8))
+                # anim.animate = True
+
+                # self.animated_tiles.append(anim)
+
+                tile_w = self.tmx_map.tilewidth
+                tile_h = self.tmx_map.tileheight
+
+                cols = int(tile.width // tile_w)
+                rows = int(tile.height // tile_h)
+
+                for row_i in range(rows):
+                    for col_i in range(cols):
+                        x = tile.x + col_i * tile_w
+                        y = tile.y + row_i * tile_h
+
+                        anim = Animated(
+                            position=(x, y + 1),  # slight offset to prevent weird gaps between tiles
+                            fileName=tile.properties.get("fileName"),
+                            row=tile.properties.get("row", 0),
+                            nFrames=tile.properties.get("nFrames", 1)
+                        )
+
+                        anim.setFPS(tile.properties.get("fps", 8))
+                        anim.animate = True
+
+                        self.animated_tiles.append(anim)
+
+                # anim.frame = random.randint(0, anim.nFrames - 1)       this could be fun for certain tiles...
     
     def draw(self, drawSurface):        
         drawSurface.blit(self.map_surface, pyVec(self.position - Drawable.CAMERA_OFFSET))
